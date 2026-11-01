@@ -1,0 +1,43 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - "v*"
+
+permissions:
+  contents: write
+
+jobs:
+  release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check that the tag, manifest.json and const.py agree
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          manifest=$(python3 -c "import json;print(json.load(open('custom_components/sky_background/manifest.json'))['version'])")
+          const=$(sed -n 's/^VERSION = "\(.*\)"$/\1/p' custom_components/sky_background/const.py)
+          echo "tag=$tag manifest=$manifest const=$const"
+          test "$tag" = "$manifest" && test "$tag" = "$const"
+
+      - name: Release notes from CHANGELOG.md
+        run: |
+          tag="${GITHUB_REF_NAME#v}"
+          awk -v v="$tag" '
+            $0 ~ "^## \\[" v "\\]" {on=1; next}
+            on && /^## \[/ {exit}
+            on {print}
+          ' CHANGELOG.md > notes.md
+          test -s notes.md || echo "Release $tag" > notes.md
+
+      - name: Zip the integration
+        run: |
+          cd custom_components/sky_background
+          zip -r ../../sky_background.zip . -x "__pycache__/*" "*.pyc"
+
+      - uses: softprops/action-gh-release@v2
+        with:
+          body_path: notes.md
+          files: sky_background.zip

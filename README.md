@@ -1,3 +1,5 @@
+<p align="center"><img src="images/icon.png" width="128" alt="Sky Background icon"></p>
+
 # Sky Background
 
 A Home Assistant integration that adds a background glow and weather effects that follow the **time of day** and the **weather**: dawn, morning, midday, afternoon, evening and night glows, plus rain, heavy rain, storms, snow, sleet, hail, fog, clouds and stars drawn as real particles (not CSS lines).
@@ -63,3 +65,19 @@ Open the integration and choose **Configure**. Pages are saved together with **S
 - By default the effects are drawn **behind the cards, over the dashboard background** (they show through translucent cards and around them). Choose *Above the cards* to draw them over everything. Pointer events are always disabled.
 - Nothing in your theme is modified. The integration may set `--lovelace-background` on the page (Auto/Always) and removes it if you turn the option off.
 - Needs Home Assistant 2025.1 or newer.
+
+## Versioning
+
+The project follows [Semantic Versioning](https://semver.org/) and keeps a [changelog](CHANGELOG.md). Each release is a Git tag named `vMAJOR.MINOR.PATCH`, and the GitHub release notes come from the changelog. HACS offers the releases as versions to install.
+
+To publish a new version:
+
+```bash
+python tools/bump_version.py 0.2.0   # updates manifest.json, const.py and CHANGELOG.md
+# write the notes under the new version in CHANGELOG.md, then
+git commit -am "Release 0.2.0"
+git tag v0.2.0
+git push origin main --tags
+```
+
+The release workflow checks that the tag, `manifest.json` and `const.py` agree before it creates the release.

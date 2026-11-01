@@ -84,7 +84,9 @@
           "sky_time_offset_min": "Decalaj de timp pentru soare și lună",
           "global_opacity": "Opacitate generală (tot)",
           "sky_max_height": "Înălțimea maximă a soarelui, lunii, norilor și stelelor (din înălțimea ecranului)",
-          "precip_max_height": "Cât de jos ajung ploaia și ninsoarea (din înălțimea ecranului)"
+          "precip_max_height": "Cât de jos ajung ploaia și ninsoarea (din înălțimea ecranului)",
+          "cloud_top": "Cei mai înalți nori (de la marginea de sus a ecranului)",
+          "cloud_bottom": "Cei mai joși nori (de la marginea de sus a ecranului)"
         },
         "data_description": {
           "layer": "În spatele cardurilor merge pe dashboard-urile standard Home Assistant. Dacă nu găsește fundalul dashboard-ului, desenează peste carduri.",
@@ -93,7 +95,8 @@
           "sky_time_offset_min": "Mută soarele și luna în timp, de exemplu ca să previzualizezi apusul. Pozițiile folosesc ora exactă și locația din Home Assistant, deci fusul orar și ora de vară sunt deja luate în calcul.",
           "global_opacity": "Scalează deodată toate efectele și luminile din fundal. Celelalte reglaje de opacitate fac ajustări fine peste ea.",
           "sky_max_height": "Tot ce e pe cer se comprimă ca să încapă și dispare treptat sub această înălțime. 100% lasă cerul cum e.",
-          "precip_max_height": "Ploaia, ninsoarea și grindina se opresc și se estompează la această înălțime. 100% înseamnă tot ecranul."
+          "precip_max_height": "Ploaia, ninsoarea și grindina se opresc și se estompează la această înălțime. 100% înseamnă tot ecranul.",
+          "cloud_top": "Norii se împart între aceste două înălțimi, cei îndepărtați mai jos și cei apropiați mai sus. Micșorează prima valoare ca să ridici plafonul de nori, mărește-o pe a doua ca norii să coboare mai mult. Limita de înălțime a cerului de mai sus îi poate totuși comprima."
         }
       },
       "performance": {

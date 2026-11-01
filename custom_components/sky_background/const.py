@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 DOMAIN = "sky_background"
-VERSION = "0.1.0"
+VERSION = "0.2.0"
 URL_BASE = "/sky_background"
 JS_FILE = "sky-background.js"
 
@@ -44,6 +44,8 @@ FRONTEND_KEYS = [
     "global_opacity",
     "sky_max_height",
     "precip_max_height",
+    "cloud_top",
+    "cloud_bottom",
     "sky_path",
     "sky_time_offset_min",
     "show_sun",
@@ -107,6 +109,8 @@ DEFAULTS: dict = {
     "global_opacity": 100,
     "sky_max_height": 100,
     "precip_max_height": 100,
+    "cloud_top": 3,
+    "cloud_bottom": 45,
     "sky_path": "arc",
     "sky_time_offset_min": 0,
     "show_sun": True,

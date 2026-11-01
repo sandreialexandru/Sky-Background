@@ -1,13 +1,18 @@
 {
   "domain": "sky_background",
   "name": "Sky Background",
-  "codeowners": ["@sandreialexandru"],
+  "codeowners": [
+    "@sandreialexandru"
+  ],
   "config_flow": true,
-  "dependencies": ["frontend", "http"],
+  "dependencies": [
+    "frontend",
+    "http"
+  ],
   "documentation": "https://github.com/sandreialexandru/Sky-Background",
   "integration_type": "service",
   "iot_class": "calculated",
   "issue_tracker": "https://github.com/sandreialexandru/Sky-Background/issues",
   "single_config_entry": true,
-  "version": "0.1.0"
+  "version": "0.2.0"
 }

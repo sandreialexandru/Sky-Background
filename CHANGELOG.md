@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.2.0] - 2026-11-01
+
+### Added
+- Cloud height: choose how high the highest clouds sit and how low the lowest ones reach, as a share of the screen height.
+
 ## [0.1.0] - 2026-11-01
 
 First public version.
@@ -28,5 +33,6 @@ First public version.
 ### Notes
 - The integration never changes your theme or your cards.
 
-[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.1.0...HEAD
+[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.2.0...HEAD
+[0.2.0]: https://github.com/sandreialexandru/Sky-Background/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/sandreialexandru/Sky-Background/releases/tag/v0.1.0

@@ -84,7 +84,9 @@
           "sky_time_offset_min": "Time offset for the sun and moon",
           "global_opacity": "Overall opacity (everything)",
           "sky_max_height": "Highest the sun, moon, clouds and stars go (screen height)",
-          "precip_max_height": "Lowest the rain and snow reach (screen height)"
+          "precip_max_height": "Lowest the rain and snow reach (screen height)",
+          "cloud_top": "Highest clouds (from the top of the screen)",
+          "cloud_bottom": "Lowest clouds (from the top of the screen)"
         },
         "data_description": {
           "layer": "Behind the cards works on standard Home Assistant dashboards. If it can't find the dashboard background it falls back to above.",
@@ -93,7 +95,8 @@
           "sky_time_offset_min": "Shifts the sun and moon in time, for example to preview sunset. Positions use the exact time and the Home Assistant location, so the time zone and daylight saving are already handled.",
           "global_opacity": "Scales every effect and the background glow at once. The other opacity sliders fine-tune on top of it.",
           "sky_max_height": "Everything in the sky is squeezed to fit and fades out below this height. 100% leaves the sky as is.",
-          "precip_max_height": "Rain, snow and hail stop and fade at this height. 100% means the full screen."
+          "precip_max_height": "Rain, snow and hail stop and fade at this height. 100% means the full screen.",
+          "cloud_top": "Clouds are spread between these two heights, far ones lower and near ones higher. Lower the first value to raise the cloud ceiling, raise the second to let clouds reach further down. The sky height limit above can still squeeze them."
         }
       },
       "performance": {

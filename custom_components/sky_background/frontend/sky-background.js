@@ -149,11 +149,18 @@
     return vcCache;
   }
   const wantsBehind = () => opts.layer === "behind" && !!viewContainer();
+  /* Home Assistant swaps the dashboard view through the container's last child, so our layers must never be the
+   * last child: they go right before hui-view (after hui-view-background, so they still paint over the background). */
   function mount(el, zAbove) {
     const vc = opts.layer === "behind" ? viewContainer() : null;
-    el.style.zIndex = vc ? "-1" : String(zAbove);
-    const parent = vc || document.body;
-    if (el.parentNode !== parent) parent.appendChild(el);
+    const view = vc && [...vc.children].find((e) => e.tagName === "HUI-VIEW");
+    if (vc && view) {
+      el.style.zIndex = "-1";
+      if (el.parentNode !== vc || !(el.compareDocumentPosition(view) & Node.DOCUMENT_POSITION_FOLLOWING)) vc.insertBefore(el, view);
+      return;
+    }
+    el.style.zIndex = String(zAbove);
+    if (el.parentNode !== document.body) document.body.appendChild(el);
   }
   function hideOverlay() { if (overlayEl) overlayEl.style.display = "none"; }
   function showOverlay(layers) {

@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 DOMAIN = "sky_background"
-VERSION = "0.3.2"
+VERSION = "0.3.3"
 URL_BASE = "/sky_background"
 JS_FILE = "sky-background.js"
 

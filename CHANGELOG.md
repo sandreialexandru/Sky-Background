@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.3.3] - 2026-11-01
+
+### Fixed
+- The dashboard stopped refreshing after you used a slider (values on the cards stayed old until a reload). The drawing layers were added as the last child of the dashboard container, which Home Assistant uses to swap views. They are now placed before the view.
+
 ## [0.3.2] - 2026-11-01
 
 ### Fixed
@@ -46,7 +51,8 @@ First public version.
 ### Notes
 - The integration never changes your theme or your cards.
 
-[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.2...HEAD
+[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.3...HEAD
+[0.3.3]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.2...v0.3.3
 [0.3.2]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.0...v0.3.2
 [0.3.0]: https://github.com/sandreialexandru/Sky-Background/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/sandreialexandru/Sky-Background/compare/v0.1.0...v0.2.0

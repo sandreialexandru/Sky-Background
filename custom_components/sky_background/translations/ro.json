@@ -81,13 +81,19 @@
           "use_real_wind": "Viteza și direcția vântului din entitatea de vreme",
           "use_real_visibility": "Ceață din entitatea de vreme (vizibilitate)",
           "sky_path": "Traseul soarelui și al lunii",
-          "sky_time_offset_min": "Decalaj de timp pentru soare și lună"
+          "sky_time_offset_min": "Decalaj de timp pentru soare și lună",
+          "global_opacity": "Opacitate generală (tot)",
+          "sky_max_height": "Înălțimea maximă a soarelui, lunii, norilor și stelelor (din înălțimea ecranului)",
+          "precip_max_height": "Cât de jos ajung ploaia și ninsoarea (din înălțimea ecranului)"
         },
         "data_description": {
           "layer": "În spatele cardurilor merge pe dashboard-urile standard Home Assistant. Dacă nu găsește fundalul dashboard-ului, desenează peste carduri.",
           "show_sun": "Soarele și luna urmează poziția reală pentru locația din Home Assistant. Norii, vântul și ceața folosesc entitatea de vreme când oferă aceste date.",
           "sky_path": "Arcul traversează ecranul de la răsărit la apus în orice anotimp. Busola urmează direcția reală.",
-          "sky_time_offset_min": "Mută soarele și luna în timp, de exemplu ca să previzualizezi apusul. Pozițiile folosesc ora exactă și locația din Home Assistant, deci fusul orar și ora de vară sunt deja luate în calcul."
+          "sky_time_offset_min": "Mută soarele și luna în timp, de exemplu ca să previzualizezi apusul. Pozițiile folosesc ora exactă și locația din Home Assistant, deci fusul orar și ora de vară sunt deja luate în calcul.",
+          "global_opacity": "Scalează deodată toate efectele și luminile din fundal. Celelalte reglaje de opacitate fac ajustări fine peste ea.",
+          "sky_max_height": "Tot ce e pe cer se comprimă ca să încapă și dispare treptat sub această înălțime. 100% lasă cerul cum e.",
+          "precip_max_height": "Ploaia, ninsoarea și grindina se opresc și se estompează la această înălțime. 100% înseamnă tot ecranul."
         }
       },
       "performance": {

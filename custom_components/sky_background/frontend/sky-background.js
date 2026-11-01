@@ -12,7 +12,7 @@
     wind: 20, heavy_rain_multiplier: 180, ripples: true, lightning: true, stars: true, clouds: true,
     fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, respect_reduced_motion: true,
     auto_reduce_weak_devices: true, disable_on_mobile: false, dashboards_mode: "all", dashboards: "",
-    sky_path: "arc", sky_time_offset_min: 0, show_sun: true, show_moon: true, sun_size: 100, moon_size: 100, sky_objects_opacity: 100, use_real_clouds: true, use_real_wind: true, use_real_visibility: true, layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
+    global_opacity: 100, sky_max_height: 100, precip_max_height: 100, sky_path: "arc", sky_time_offset_min: 0, show_sun: true, show_moon: true, sun_size: 100, moon_size: 100, sky_objects_opacity: 100, use_real_clouds: true, use_real_wind: true, use_real_visibility: true, layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
     weather_dimming: 100, show_dots: false, only_theme_names: "",
   };
 
@@ -61,7 +61,7 @@
   function layersFor(period, effect, dark, o, overlay, behind) {
     const mode = dark ? "dark" : "light";
     const glows = (SKY[mode][period] || SKY[mode].night)[1];
-    const k = (o.background_intensity / 100) * (overlay ? (o.overlay_intensity / 100) * (behind ? 1 : 0.6) : 1);
+    const k = (o.background_intensity / 100) * (o.global_opacity / 100) * (overlay ? (o.overlay_intensity / 100) * (behind ? 1 : 0.6) : 1);
     const wd = o.weather_dimming / 100;
     const fx = overlay ? "" : " fixed";
     const layers = [];
@@ -282,10 +282,19 @@
   }
 
   /* ------------------------------------------------------------- particles */
-  const cv = document.createElement("canvas");
-  cv.id = "sky-background-canvas";
-  cv.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;display:none";
-  const ctx = cv.getContext("2d");
+  const mkCanvas = (id) => {
+    const c = document.createElement("canvas");
+    c.id = id;
+    c.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;display:none";
+    return c;
+  };
+  const cvS = mkCanvas("sky-background-sky"), cvF = mkCanvas("sky-background-canvas");
+  const ctxS = cvS.getContext("2d"), ctxF = cvF.getContext("2d");
+  let ctx = ctxS;
+  /* the sky is laid out in the top half of the screen; a lower limit squeezes it into that height */
+  const skyK = () => Math.min(1, opts.sky_max_height / 50);
+  const precipBottom = () => H * opts.precip_max_height / 100;
+  const fadeMask = (pct) => (pct >= 100 ? "none" : `linear-gradient(to bottom, #000 0, #000 ${Math.max(0, pct - 10)}%, transparent ${pct}%)`);
   let W = 0, H = 0, dpr = 1, drops = [], flakes = [], hail = [], ripples = [], stars = [], clouds = [], fogs = [];
   let t = 0, last = 0, flash = 0, nextFlash = 5, running = false, rafId = 0, fogSprite = null, cloudSprites = [], cloudKey = "";
   let sunSprites = null, moonHalo = null;
@@ -295,9 +304,9 @@
   const reduced = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
   const factor = () => (opts.auto_reduce_weak_devices && weak() ? 0.5 : 1);
 
-  const mkDrop = (init) => { const z = 0.4 + Math.random() * 0.6; return { x: Math.random() * (W + 240) - 120, y: init ? Math.random() * H : -30, z, v: (9 + Math.random() * 7) * z * 1.5, l: (10 + Math.random() * 16) * z, a: 0.15 + 0.4 * z }; };
-  const mkFlake = (init) => { const z = Math.random(); return { x: Math.random() * W, y: init ? Math.random() * H : -10, z, r: 1 + z * 3.2, v: 0.4 + z * 1.3, ph: Math.random() * 6.28, sw: 0.4 + Math.random() * 0.8, a: 0.35 + z * 0.6 }; };
-  const mkHail = (init) => ({ x: Math.random() * W, y: init ? Math.random() * H : -10, v: 11 + Math.random() * 6, r: 1.2 + Math.random() * 1.6, b: 0, a: 0.5 + Math.random() * 0.4 });
+  const mkDrop = (init) => { const z = 0.4 + Math.random() * 0.6; return { x: Math.random() * (W + 240) - 120, y: init ? Math.random() * precipBottom() : -30, z, v: (9 + Math.random() * 7) * z * 1.5, l: (10 + Math.random() * 16) * z, a: 0.15 + 0.4 * z }; };
+  const mkFlake = (init) => { const z = Math.random(); return { x: Math.random() * W, y: init ? Math.random() * precipBottom() : -10, z, r: 1 + z * 3.2, v: 0.4 + z * 1.3, ph: Math.random() * 6.28, sw: 0.4 + Math.random() * 0.8, a: 0.35 + z * 0.6 }; };
+  const mkHail = (init) => ({ x: Math.random() * W, y: init ? Math.random() * precipBottom() : -10, v: 11 + Math.random() * 6, r: 1.2 + Math.random() * 1.6, b: 0, a: 0.5 + Math.random() * 0.4 });
 
   function sprite(w, h, paint) { const c = document.createElement("canvas"); c.width = w; c.height = h; paint(c.getContext("2d"), w, h); return c; }
   function buildSprites() {
@@ -345,9 +354,8 @@
   function resize() {
     dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     W = innerWidth; H = innerHeight;
-    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
-    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-    stars = Array.from({ length: Math.round(W * H / 14000) }, () => ({ x: Math.random() * W, y: Math.random() * H * 0.75, r: 0.6 + Math.random() * 1.2, p: Math.random() * 6 }));
+    for (const [c, g] of [[cvS, ctxS], [cvF, ctxF]]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0); }
+    stars = Array.from({ length: Math.round(W * H / 14000) }, () => ({ x: Math.random() * W, y: Math.random() * H * 0.75 * skyK(), r: 0.6 + Math.random() * 1.2, p: Math.random() * 6 }));
     populate();
   }
   function populate() {
@@ -367,10 +375,10 @@
       const n = Math.round(cloudCover() / 100 * 9 * Math.min(1.4, W / 900 + 0.4));
       for (let i = 0; i < n; i++) {
         const z = 0.3 + Math.random() * 0.7;
-        clouds.push({ x: Math.random() * (W + 900) - 700, y: H * (0.03 + (1 - z) * 0.3 + Math.random() * 0.12), z, s: 0.6 + z * 1.2, k: Math.floor(Math.random() * 4) });
+        clouds.push({ x: Math.random() * (W + 900) - 700, y: H * (0.03 + (1 - z) * 0.3 + Math.random() * 0.12) * skyK(), z, s: 0.6 + z * 1.2, k: Math.floor(Math.random() * 4) });
       }
     }
-    if (opts.fog && haze() > 0.12) for (let i = 0; i < 7; i++) fogs.push({ x: Math.random() * (W + 420) - 420, y: H * (0.1 + Math.random() * 0.8), s: 1 + Math.random() * 1.4, v: 6 + Math.random() * 8 });
+    if (opts.fog && haze() > 0.12) for (let i = 0; i < 7; i++) fogs.push({ x: Math.random() * (W + 420) - 420, y: H * (0.1 + Math.random() * 0.8) * skyK(), s: 1 + Math.random() * 1.4, v: 6 + Math.random() * 8 });
     const rgb = cloudRgb();
     if (rgb.join(",") !== cloudKey || !cloudSprites.length) buildClouds(rgb);
   }
@@ -380,9 +388,9 @@
    * in any season). "azimuth": the real compass direction. */
   function skyPoint(az, altDeg, arc) {
     if (opts.sky_path === "arc" && arc) {
-      return [W * (0.07 + 0.86 * arc.frac), H * (0.3 - 0.24 * Math.sin(Math.PI * arc.frac) * clamp(arc.peak / 55, 0.4, 1))];
+      return [W * (0.07 + 0.86 * arc.frac), H * (0.3 - 0.24 * Math.sin(Math.PI * arc.frac) * clamp(arc.peak / 55, 0.4, 1)) * skyK()];
     }
-    return [clamp(((az - 60) / 240) * W, 36, W - 36), H * (0.3 - 0.26 * clamp(altDeg, -8, 70) / 70)];
+    return [clamp(((az - 60) / 240) * W, 36, W - 36), H * (0.3 - 0.26 * clamp(altDeg, -8, 70) / 70) * skyK()];
   }
   const edgeFade = (az, arc) => (opts.sky_path === "arc" && arc ? 1 : az < 25 || az > 335 ? 0 : 1);
 
@@ -425,7 +433,8 @@
     if (now - last < step) return;
     const dt = Math.min(0.1, (now - last) / 1000 || 0.033); last = now; t += dt;
     const k = dt * 60;
-    ctx.clearRect(0, 0, W, H);
+    ctxS.clearRect(0, 0, W, H); ctxF.clearRect(0, 0, W, H);
+    ctx = ctxS;
     const dark = isDark();
     const alpha = opts.sky_objects_opacity / 100;
     const wnd = windInfo();
@@ -451,6 +460,8 @@
       ctx.globalAlpha = 1;
     }
 
+    ctx = ctxF;
+    const PB = precipBottom();
     if (drops.length) {
       const sp = opts.rain_speed / 100, slant = wnd.dirX * (0.08 + wnd.strength * 0.6);
       ctx.lineCap = "round";
@@ -459,8 +470,8 @@
         ctx.strokeStyle = `rgba(${col},${d.a.toFixed(3)})`; ctx.lineWidth = 0.6 + d.z * 0.9;
         ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.lineTo(d.x - d.l * slant, d.y - d.l); ctx.stroke();
         d.y += d.v * sp * k; d.x += d.v * sp * k * slant;
-        if (d.y > H) {
-          if (opts.ripples && d.z > 0.75 && ripples.length < 30) ripples.push({ x: d.x, y: H - 2 - Math.random() * 6, r: 1, a: 0.5 });
+        if (d.y > PB) {
+          if (opts.ripples && d.z > 0.75 && ripples.length < 30) ripples.push({ x: d.x, y: PB - 2 - Math.random() * 6, r: 1, a: 0.5 });
           Object.assign(d, mkDrop(false));
         }
         if (d.x < -140 || d.x > W + 140) d.x = Math.random() * W;
@@ -479,7 +490,7 @@
         ctx.fillStyle = dark ? "#ffffff" : "#f4f8ff";
         ctx.beginPath(); ctx.arc(x, f.y, f.r, 0, 6.283); ctx.fill();
         f.y += f.v * sp * k; f.x += (Math.sin(t * 0.3 + f.ph) * 0.15 + wnd.dirX * wnd.strength * 1.6) * k;
-        if (f.y > H + 6 || f.x > W + 30 || f.x < -30) Object.assign(f, mkFlake(false));
+        if (f.y > PB + 6 || f.x > W + 30 || f.x < -30) Object.assign(f, mkFlake(false));
       }
       ctx.globalAlpha = 1;
     }
@@ -487,7 +498,7 @@
       for (const h of hail) {
         ctx.fillStyle = `rgba(235,242,255,${h.a.toFixed(3)})`; ctx.beginPath(); ctx.arc(h.x, h.y, h.r, 0, 6.283); ctx.fill();
         h.y += h.v * k; h.x += h.v * k * 0.1 * wnd.dirX;
-        if (h.y > H) { if (h.b < 1) { h.b++; h.y = H - 2; h.v = -h.v * 0.35; } else Object.assign(h, mkHail(false)); }
+        if (h.y > PB) { if (h.b < 1) { h.b++; h.y = PB - 2; h.v = -h.v * 0.35; } else Object.assign(h, mkHail(false)); }
         if (h.v < 0) { h.v += 0.8 * k; if (h.v >= 0) h.v = 11; }
       }
     }
@@ -503,11 +514,14 @@
       && !(opts.disable_on_mobile && mobile()) && !(opts.respect_reduced_motion && reduced())
       && !(opts.pause_when_hidden && document.hidden);
     if (!want) { stop(); return; }
-    cv.style.display = "block"; cv.style.opacity = String(opts.particle_opacity / 100);
-    mount(cv, 3);
+    const g = opts.global_opacity / 100;
+    cvS.style.display = "block"; cvS.style.opacity = String(g);
+    cvF.style.display = "block"; cvF.style.opacity = String((opts.particle_opacity / 100) * g);
+    for (const [c, pct] of [[cvS, opts.sky_max_height], [cvF, opts.precip_max_height]]) c.style.webkitMaskImage = c.style.maskImage = fadeMask(pct);
+    mount(cvS, 3); mount(cvF, 3);
     if (!running) { running = true; last = 0; rafId = requestAnimationFrame(frame); }
   }
-  function stop() { if (running) { cancelAnimationFrame(rafId); running = false; } cv.style.display = "none"; ctx.clearRect(0, 0, W, H); }
+  function stop() { if (running) { cancelAnimationFrame(rafId); running = false; } cvS.style.display = "none"; cvF.style.display = "none"; ctxS.clearRect(0, 0, W, H); ctxF.clearRect(0, 0, W, H); }
 
   /* ------------------------------------------------------------------ loop */
   function readState() {

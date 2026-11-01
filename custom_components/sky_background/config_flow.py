@@ -1,7 +1,6 @@
 """Config flow with a menu of option pages."""
 from __future__ import annotations
 
-import json
 from typing import Any
 
 import voluptuous as vol
@@ -88,15 +87,12 @@ PAGES: dict[str, dict[str, Any]] = {
         "only_theme_names": _TEXT,
     },
     "appearance": {
-        "apply_background": _BOOL,
-        "palette_style": _choice(["none", "border_only"], "palette_style"),
-        "card_opacity": _num(10, 100, 5, "%"),
-        "use_theme_base_color": _BOOL,
+        "background_mode": _choice(["auto", "always", "overlay", "off"], "background_mode"),
+        "overlay_intensity": _num(10, 100, 5, "%"),
         "color_mode": _choice(["auto", "dark", "light"], "color_mode"),
         "background_intensity": _num(0, 200, 5, "%"),
         "weather_dimming": _num(0, 200, 5, "%"),
         "show_dots": _BOOL,
-        "custom_variables": sel.TextSelector(sel.TextSelectorConfig(multiline=True)),
     },
 }
 
@@ -129,13 +125,6 @@ def _clean(user_input: dict[str, Any]) -> dict[str, Any]:
 
 def _validate(page: str, user_input: dict[str, Any]) -> dict[str, str]:
     errors: dict[str, str] = {}
-    if page == "appearance" and (raw := (user_input.get("custom_variables") or "").strip()):
-        try:
-            data = json.loads(raw)
-            if not isinstance(data, dict):
-                raise ValueError
-        except ValueError:
-            errors["custom_variables"] = "invalid_json"
     if page == "scope" and user_input.get("dashboards_mode") != "all":
         if not (user_input.get("dashboards") or "").strip():
             errors["dashboards"] = "dashboards_required"

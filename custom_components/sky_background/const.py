@@ -41,17 +41,14 @@ FRONTEND_KEYS = [
     "disable_on_mobile",
     "dashboards_mode",
     "dashboards",
-    "apply_background",
-    "palette_style",
-    "card_opacity",
-    "use_theme_base_color",
+    "background_mode",
+    "overlay_intensity",
     "everywhere",
     "color_mode",
     "background_intensity",
     "weather_dimming",
     "show_dots",
     "only_theme_names",
-    "custom_variables",
 ]
 
 DEFAULTS: dict = {
@@ -93,16 +90,13 @@ DEFAULTS: dict = {
     "dashboards_mode": "all",
     "dashboards": "",
     # appearance
-    "apply_background": True,
-    "palette_style": "none",
-    "card_opacity": 100,
-    "use_theme_base_color": False,
+    "background_mode": "auto",
+    "overlay_intensity": 60,
     "color_mode": "auto",
     "background_intensity": 100,
     "weather_dimming": 100,
-    "show_dots": True,
+    "show_dots": False,
     "only_theme_names": "",
-    "custom_variables": "",
 }
 
 # HA weather condition -> effect

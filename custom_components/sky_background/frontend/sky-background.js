@@ -1,4 +1,4 @@
-/* Sky Background - theme palette + time-of-day background + weather particles.
+/* Sky Background - time-of-day glows + weather effects. Does not touch your theme or cards.
  * Reads sensor.sky_background_period / sensor.sky_background_effect (options travel as attributes). */
 (() => {
   if (window.__skyBackground) return;
@@ -6,110 +6,14 @@
 
   const PERIOD_ENTITY = "sensor.sky_background_period";
   const EFFECT_ENTITY = "sensor.sky_background_effect";
-  const MARK = "--sky-bg-active";
 
   const DEFAULTS = {
     effects_enabled: true, rain_density: 100, snow_density: 100, rain_speed: 100, snow_speed: 100,
     wind: 20, heavy_rain_multiplier: 180, ripples: true, lightning: true, stars: true, clouds: true,
     fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, respect_reduced_motion: true,
     auto_reduce_weak_devices: true, disable_on_mobile: false, dashboards_mode: "all", dashboards: "",
-    apply_background: true, palette_style: "none", card_opacity: 100, use_theme_base_color: false, everywhere: false, color_mode: "auto", background_intensity: 100,
-    weather_dimming: 100, show_dots: true, only_theme_names: "", custom_variables: "",
-  };
-
-  /* ---------------------------------------------------------------- palette */
-  const BASE = {
-    "border-radius": "20px", "ha-card-border-radius": "var(--border-radius)", "ha-dialog-border-radius": "16px",
-    "ha-card-border-width": "1px", "ha-card-box-shadow": "none", "box-shadow": "none",
-    "dash-on": "#FFC107", "dash-ok": "#00E676", "dash-warn": "#FF9800", "dash-heat": "#FF7043",
-    "dash-bad": "#F44336", "dash-cold": "#42A5F5", "dash-cool": "#26C6DA", "dash-info": "#29B6F6",
-    "dash-media": "#7C4DFF", "dash-led": "#E040FB", "dash-presence": "#E91E63", "dash-off": "#5C6B7A",
-    "dash-unavailable": "#EF5350",
-    "error-color": "var(--dash-bad)", "warning-color": "var(--dash-warn)", "success-color": "var(--dash-ok)",
-    "info-color": "var(--dash-info)", "accent-color": "var(--dash-on)",
-    "state-icon-color": "rgb(var(--color-theme))", "state-icon-active-color": "var(--dash-on)",
-    "bubble-border-radius": "20px", "bubble-main-background-color": "transparent",
-    "bubble-secondary-background-color": "transparent", "bubble-icon-background-color": "transparent",
-    "bubble-sub-button-background-color": "transparent", "bubble-sub-button-light-background-color": "transparent",
-    "bubble-button-background-color": "transparent", "bubble-button-main-background-color": "transparent",
-    "bubble-button-icon-background-color": "transparent", "bubble-select-main-background-color": "transparent",
-    "bubble-select-arrow-background-color": "transparent", "bubble-media-player-button-background-color": "transparent",
-    "bubble-main-buttons-background-color": "transparent", "bubble-horizontal-buttons-stack-background-color": "transparent",
-    "bubble-climate-background-color": "transparent", "bubble-climate-button-background-color": "transparent",
-    "bubble-sub-slider-background-color": "transparent", "bubble-pop-up-border-radius": "20px",
-    "control-slider-thickness": "40px", "control-slider-border-radius": "14px", "control-slider-background-opacity": "1",
-  };
-
-  const DARK = {
-    "primary-text-color": "#E6EAF0", "secondary-text-color": "#94A3B8", "disabled-text-color": "#5C6B7A",
-    "primary-color": "#29B6F6",
-    "color-red": "244, 67, 54", "color-green": "0, 230, 118", "color-yellow": "255, 193, 7",
-    "color-orange": "255, 112, 67", "color-blue": "41, 182, 246", "color-purple": "171, 71, 188",
-    "color-pink": "233, 30, 99", "color-grey": "92, 107, 122", "color-theme": "230, 234, 240",
-    "color-background-yellow": "var(--color-yellow)", "color-background-blue": "var(--color-blue)",
-    "color-background-green": "var(--color-green)", "color-background-red": "var(--color-red)",
-    "color-background-pink": "var(--color-pink)", "color-background-purple": "var(--color-purple)",
-    "color-yellow-text": "var(--color-yellow)", "color-blue-text": "var(--color-blue)",
-    "color-green-text": "var(--color-green)", "color-red-text": "var(--color-red)",
-    "color-pink-text": "var(--color-pink)", "color-purple-text": "var(--color-purple)",
-    "opacity-bg": "0.1",
-    "google-red": "#F44336", "google-green": "#00E676", "google-yellow": "#FFC107", "google-blue": "#29B6F6",
-    "google-violet": "#AB47BC", "google-grey": "#5C6B7A",
-    "primary-background-color": "#0B0E14", "secondary-background-color": "#0B0E14", "card-background-color": "#121820",
-    "ha-card-background": "rgba(255, 255, 255, 0.05)", "ha-card-border-color": "rgba(255, 255, 255, 0.18)",
-    "dash-neutral-border": "rgba(255, 255, 255, 0.16)", "dash-shade": "0%", "dash-neutral-icon": "#CBD5E1",
-    "divider-color": "rgba(255, 255, 255, 0.10)", "app-header-text-color": "var(--primary-text-color)",
-    "app-header-background-color": "#0B0E14", "paper-tabs-selection-bar-color": "var(--primary-text-color)",
-    "sidebar-background-color": "#0B0E14", "sidebar-text-color": "#94A3B8", "sidebar-icon-color": "#94A3B8",
-    "sidebar-selected-text-color": "var(--dash-info)", "sidebar-selected-icon-color": "var(--dash-info)",
-    "slider-color": "var(--dash-info)", "slider-bar-color": "rgba(41, 182, 246, 0.38)",
-    "control-slider-color": "var(--dash-info)", "control-slider-background": "rgba(41, 182, 246, 0.18)",
-    "switch-checked-color": "var(--dash-info)", "switch-checked-button-color": "#0B0E14",
-    "switch-checked-track-color": "rgba(41, 182, 246, 0.5)", "input-fill-color": "#121820",
-    "input-ink-color": "var(--primary-text-color)", "input-label-ink-color": "var(--secondary-text-color)",
-    "input-dropdown-icon-color": "var(--secondary-text-color)", "mdc-theme-on-secondary": "var(--card-background-color)",
-    "mdc-ripple-color": "rgba(41, 182, 246, 0.12)", "paper-progress-active-color": "var(--dash-info)",
-    "paper-progress-container-color": "rgba(41, 182, 246, 0.2)", "mini-media-player-accent-color": "var(--dash-info)",
-    "bubble-pop-up-background-color": "rgba(30, 40, 58, 0.05)", "bubble-pop-up-main-background-color": "rgba(30, 40, 58, 0.05)",
-    "bubble-pop-up-border": "1px solid rgba(255, 255, 255, 0.12)", "bubble-pop-up-close-button-border": "none",
-    "bubble-backdrop-background-color": "rgba(0, 0, 0, 0.55)", "bubble-select-background-color": "transparent",
-    "bubble-select-list-background-color": "rgba(18, 24, 32, 0.96)", "bubble-select-list-border-radius": "16px",
-  };
-
-  const LIGHT = {
-    "primary-text-color": "#212121", "secondary-text-color": "#5F6368", "disabled-text-color": "#9E9E9E",
-    "primary-color": "#0288D1",
-    "color-red": "211, 47, 47", "color-green": "0, 160, 90", "color-yellow": "245, 160, 0",
-    "color-orange": "230, 81, 0", "color-blue": "2, 136, 209", "color-purple": "123, 31, 162",
-    "color-pink": "194, 24, 91", "color-grey": "120, 130, 140", "color-theme": "33, 33, 33",
-    "color-background-yellow": "250, 250, 250", "color-background-blue": "250, 250, 250",
-    "color-background-green": "250, 250, 250", "color-background-red": "250, 250, 250",
-    "color-background-pink": "250, 250, 250", "color-background-purple": "250, 250, 250",
-    "color-yellow-text": "var(--primary-text-color)", "color-blue-text": "var(--primary-text-color)",
-    "color-green-text": "var(--primary-text-color)", "color-red-text": "var(--primary-text-color)",
-    "color-pink-text": "var(--primary-text-color)", "color-purple-text": "var(--primary-text-color)",
-    "opacity-bg": "1",
-    "google-red": "#D32F2F", "google-green": "#00A05A", "google-yellow": "#F5A000", "google-blue": "#0288D1",
-    "google-violet": "#7B1FA2", "google-grey": "#78828C",
-    "primary-background-color": "#DCE2EB", "secondary-background-color": "#DCE2EB", "card-background-color": "#FFFFFF",
-    "ha-card-background": "rgba(255, 255, 255, 0.35)", "ha-card-border-color": "rgba(0, 0, 0, 0.22)",
-    "dash-neutral-border": "rgba(0, 0, 0, 0.24)", "dash-shade": "28%", "dash-neutral-icon": "#5F6B7A",
-    "divider-color": "rgba(0, 0, 0, 0.12)", "app-header-text-color": "var(--primary-text-color)",
-    "app-header-background-color": "#DCE2EB",
-    "sidebar-background-color": "#FFFFFF", "sidebar-text-color": "#5F6368", "sidebar-icon-color": "#5F6368",
-    "sidebar-selected-text-color": "var(--dash-info)", "sidebar-selected-icon-color": "var(--dash-info)",
-    "slider-color": "var(--dash-info)", "slider-bar-color": "rgba(2, 136, 209, 0.38)",
-    "control-slider-color": "var(--dash-info)", "control-slider-background": "rgba(2, 136, 209, 0.18)",
-    "switch-checked-color": "var(--dash-info)", "switch-checked-button-color": "#FFFFFF",
-    "switch-checked-track-color": "rgba(2, 136, 209, 0.5)", "input-fill-color": "#F5F5F5",
-    "input-ink-color": "var(--primary-text-color)", "input-label-ink-color": "var(--secondary-text-color)",
-    "input-dropdown-icon-color": "var(--secondary-text-color)",
-    "mdc-ripple-color": "rgba(2, 136, 209, 0.12)", "paper-progress-active-color": "var(--dash-info)",
-    "paper-progress-container-color": "rgba(2, 136, 209, 0.2)", "mini-media-player-accent-color": "var(--dash-info)",
-    "bubble-pop-up-background-color": "rgba(110, 125, 150, 0.12)", "bubble-pop-up-main-background-color": "rgba(110, 125, 150, 0.12)",
-    "bubble-pop-up-border": "1px solid rgba(0, 0, 0, 0.22)", "bubble-pop-up-close-button-border": "none",
-    "bubble-backdrop-background-color": "rgba(0, 0, 0, 0.3)", "bubble-select-background-color": "transparent",
-    "bubble-select-list-background-color": "rgba(255, 255, 255, 0.97)", "bubble-select-list-border-radius": "16px",
+    background_mode: "auto", overlay_intensity: 60, everywhere: false, color_mode: "auto", background_intensity: 100,
+    weather_dimming: 100, show_dots: false, only_theme_names: "",
   };
 
   /* base color + glows [x, y, "r,g,b", alpha] per period */
@@ -153,44 +57,39 @@
   }
   const DOTS = { dark: dotsUri(false), light: dotsUri(true) };
 
-  function buildVars(period, effect, dark, o) {
-    const vars = {};
+  /* Background layers for a period + effect. As an overlay it is lighter and has no texture. */
+  function layersFor(period, effect, dark, o, overlay) {
     const mode = dark ? "dark" : "light";
-    if (o.palette_style === "border_only") Object.assign(vars, BASE, dark ? DARK : LIGHT);
-    if (o.card_opacity < 100) vars["ha-card-background"] = `color-mix(in srgb, var(--card-background-color) ${o.card_opacity}%, transparent)`;
-    if (o.apply_background) {
-      const [base, glows] = SKY[mode][period] || SKY[mode].night;
-      const k = o.background_intensity / 100;
-      const layers = [];
-      const dim = (DIM[effect] || DIM.clear)[dark ? 0 : 1] * (o.weather_dimming / 100);
-      if (dim > 0) {
-        const c = dark ? "10,15,24" : "92,106,126";
-        layers.push(`linear-gradient(rgba(${c},${Math.min(dim, 0.85).toFixed(3)}), rgba(${c},${Math.min(dim, 0.85).toFixed(3)})) fixed`);
-      }
-      if (o.show_dots) layers.push(DOTS[mode]);
-      const cool = (COOL_GLOW[effect] || 0) * k * (o.weather_dimming / 100);
-      if (cool > 0) {
-        const c = dark ? "66,165,245" : "2,136,209";
-        layers.push(`radial-gradient(circle 60vmax at 10% 6%, rgba(${c},${cool.toFixed(3)}), rgba(${c},0)) fixed`);
-      }
-      const warmCut = effect === "clear" ? 1 : 1 - Math.min(0.6, (DIM[effect] || [0])[0]);
-      for (const [x, y, c, a] of glows) {
-        const warm = /^(255|24\d|23\d|230|240)/.test(c);
-        const alpha = Math.min(1, a * k * (warm ? warmCut : 1)).toFixed(3);
-        layers.push(`radial-gradient(circle 60vmax at ${x} ${y}, rgba(${c},${alpha}), rgba(${c},0)) fixed`);
-      }
-      vars["lovelace-background"] = `${layers.join(", ")}, ${o.use_theme_base_color ? "var(--primary-background-color)" : base}`;
+    const glows = (SKY[mode][period] || SKY[mode].night)[1];
+    const k = (o.background_intensity / 100) * (overlay ? o.overlay_intensity / 100 : 1);
+    const wd = o.weather_dimming / 100;
+    const fx = overlay ? "" : " fixed";
+    const layers = [];
+    const dim = (DIM[effect] || DIM.clear)[dark ? 0 : 1] * wd * (overlay ? 0.35 : 1);
+    if (dim > 0) {
+      const c = dark ? "10,15,24" : "92,106,126", a = Math.min(dim, 0.85).toFixed(3);
+      layers.push(`linear-gradient(rgba(${c},${a}), rgba(${c},${a}))${fx}`);
     }
-    if (o.custom_variables) {
-      try { Object.entries(JSON.parse(o.custom_variables)).forEach(([k, v]) => { vars[k.replace(/^--/, "")] = String(v); }); } catch (e) { /* ignored */ }
+    if (!overlay && o.show_dots) layers.push(DOTS[mode]);
+    const cool = (COOL_GLOW[effect] || 0) * k * wd;
+    if (cool > 0) {
+      const c = dark ? "66,165,245" : "2,136,209";
+      layers.push(`radial-gradient(circle 60vmax at 10% 6%, rgba(${c},${cool.toFixed(3)}), rgba(${c},0))${fx}`);
     }
-    return vars;
+    const warmCut = effect === "clear" ? 1 : 1 - Math.min(0.6, (DIM[effect] || [0])[0]);
+    for (const [x, y, c, a] of glows) {
+      const warm = /^(255|24\d|23\d|230|240)/.test(c);
+      const alpha = Math.min(1, a * k * (warm ? warmCut : 1)).toFixed(3);
+      layers.push(`radial-gradient(circle 60vmax at ${x} ${y}, rgba(${c},${alpha}), rgba(${c},0))${fx}`);
+    }
+    return layers;
   }
 
   /* ----------------------------------------------------------------- state */
   let hass = null, opts = { ...DEFAULTS }, period = "night", effect = "clear";
-  let applied = {}, appliedKey = "";
+  let ourBg = "", appliedKey = "", overlayEl = null;
   const root = document.documentElement;
+  const BG_VAR = "--lovelace-background";
 
   const isDark = () => opts.color_mode === "dark" ? true : opts.color_mode === "light" ? false : !!(hass && hass.themes && hass.themes.darkMode);
   const themeAllowed = () => {
@@ -209,33 +108,52 @@
     return true;
   };
 
-  function clearVars() {
-    for (const k of Object.keys(applied)) root.style.removeProperty("--" + k);
-    root.style.removeProperty(MARK);
-    applied = {}; appliedKey = "";
+  const currentBg = () => root.style.getPropertyValue(BG_VAR).trim();
+  /* the selected theme (or something else) already defines a background that is not ours */
+  const themeDefinesBackground = () => { const cur = currentBg(); return !!cur && cur !== ourBg; };
+  const intact = () => !!ourBg && currentBg() === ourBg;
+
+  function clearBackground() {
+    if (ourBg && currentBg() === ourBg) root.style.removeProperty(BG_VAR);
+    ourBg = "";
   }
-  function intact() {
-    for (const k of ["lovelace-background", "primary-background-color", "dash-on", "ha-card-border-color"]) {
-      if (k in applied && root.style.getPropertyValue("--" + k).trim() !== String(applied[k]).trim()) return false;
+  function setBackground(value) {
+    root.style.setProperty(BG_VAR, value);
+    ourBg = currentBg();
+  }
+  function hideOverlay() { if (overlayEl) overlayEl.style.display = "none"; }
+  function showOverlay(layers) {
+    if (!overlayEl) {
+      overlayEl = document.createElement("div");
+      overlayEl.id = "sky-background-overlay";
+      overlayEl.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:2";
     }
-    return !!root.style.getPropertyValue(MARK);
+    if (!overlayEl.isConnected) document.body.appendChild(overlayEl);
+    overlayEl.style.background = layers.join(", ");
+    overlayEl.style.display = "block";
   }
+
   function applyTheme(force) {
-    if (!themeAllowed() || (opts.palette_style === "none" && !opts.apply_background && !opts.custom_variables && opts.card_opacity >= 100)) { if (Object.keys(applied).length) clearVars(); return; }
-    const key = [period, effect, isDark(), JSON.stringify(opts)].join("|");
-    if (!force && key === appliedKey && intact()) return;
-    const next = buildVars(period, effect, isDark(), opts);
-    for (const k of Object.keys(applied)) if (!(k in next)) root.style.removeProperty("--" + k);
-    for (const [k, v] of Object.entries(next)) root.style.setProperty("--" + k, v);
-    root.style.setProperty(MARK, key.length.toString());
-    applied = next; appliedKey = key;
+    if (!themeAllowed() || opts.background_mode === "off") { clearBackground(); hideOverlay(); appliedKey = ""; return; }
+    const dark = isDark();
+    const overlay = opts.background_mode === "overlay" || (opts.background_mode === "auto" && themeDefinesBackground());
+    const state = [period, effect, dark, overlay, JSON.stringify(opts)].join("|");
+    if (!force && state === appliedKey && (overlay || intact())) return;
+    if (overlay) {
+      clearBackground();
+      showOverlay(layersFor(period, effect, dark, opts, true));
+    } else {
+      hideOverlay();
+      setBackground(`${layersFor(period, effect, dark, opts, false).join(", ")}, var(--primary-background-color)`);
+    }
+    appliedKey = state;
   }
-  /* HA rewrites the theme variables when the theme changes; put ours back on top */
+  /* Home Assistant rewrites the theme variables when the theme changes: re-evaluate */
   let reapplyTimer = 0;
   new MutationObserver(() => {
-    if (!hass || !Object.keys(applied).length || intact()) return;
+    if (!hass || !appliedKey) return;
     clearTimeout(reapplyTimer);
-    reapplyTimer = setTimeout(() => applyTheme(true), 80);
+    reapplyTimer = setTimeout(() => applyTheme(false), 80);
   }).observe(root, { attributes: true, attributeFilter: ["style"] });
 
   /* ------------------------------------------------------------- particles */

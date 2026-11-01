@@ -99,26 +99,20 @@
       "appearance": {
         "title": "Temă și fundal",
         "data": {
-          "apply_background": "Setează fundalul după ora din zi",
-          "palette_style": "Paletă și stil de carduri",
-          "card_opacity": "Opacitatea fundalului cardurilor",
-          "use_theme_base_color": "Folosește culoarea de fundal a temei ca bază",
+          "background_mode": "Fundal după ora din zi",
+          "overlay_intensity": "Intensitatea suprapunerii",
           "color_mode": "Mod de culoare",
           "background_intensity": "Intensitatea luminilor din fundal",
           "weather_dimming": "Întunecare după vreme",
-          "show_dots": "Textură cu puncte (cer înstelat)",
-          "custom_variables": "Variabile CSS suplimentare (obiect JSON)"
+          "show_dots": "Textură cu puncte (cer înstelat)"
         },
         "data_description": {
-          "custom_variables": "Se aplică ultimele, deci au prioritate. Exemplu: {\"dash-on\": \"#FFB300\"}",
-          "palette_style": "„Niciuna” lasă tema și cardurile în pace și setează doar fundalul.",
-          "card_opacity": "Sub 100% cardurile lasă fundalul să se vadă. 100% nu modifică tema.",
-          "use_theme_base_color": "Păstrează culoarea de fundal a temei tale sub luminile după oră."
+          "background_mode": "Auto setează fundalul doar când tema sau dashboard-ul nu au unul, altfel desenează o suprapunere ușoară. Tema și cardurile nu sunt modificate niciodată.",
+          "overlay_intensity": "Cât de puternice sunt luminile când sunt desenate ca suprapunere."
         }
       }
     },
     "error": {
-      "invalid_json": "Introdu un obiect JSON valid.",
       "dashboards_required": "Introdu cel puțin o cale URL de dashboard."
     }
   },
@@ -166,10 +160,12 @@
         "hail": "Grindină"
       }
     },
-    "palette_style": {
+    "background_mode": {
       "options": {
-        "none": "Niciuna, păstrează tema mea",
-        "border_only": "Carduri doar cu bordură și variabile Bubble Card"
+        "auto": "Auto (doar dacă nu e setat)",
+        "always": "Setează mereu fundalul",
+        "overlay": "Doar suprapunere",
+        "off": "Oprit (doar efectele)"
       }
     }
   },

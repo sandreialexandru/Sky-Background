@@ -1,12 +1,11 @@
 # Sky Background
 
-A Home Assistant integration that gives your dashboards a background and a palette that follow the **time of day** and the **weather**: dawn, morning, midday, afternoon, evening and night glows, plus rain, heavy rain, storms, snow, sleet, hail, fog, clouds and stars drawn as real particles (not CSS lines).
+A Home Assistant integration that adds a background glow and weather effects that follow the **time of day** and the **weather**: dawn, morning, midday, afternoon, evening and night glows, plus rain, heavy rain, storms, snow, sleet, hail, fog, clouds and stars drawn as real particles (not CSS lines).
 
-- **Time of day** picks the palette (computed from the sun, adjustable).
-- **Weather** adds particles and dims the background (from any `weather` entity).
-- Works on **any dashboard** and any theme: by default it only sets the background and draws the weather effects, and leaves your theme and cards alone.
-- Optional: make the cards translucent so the background shows through, or switch on a ready-made border-only look (for Bubble Card dashboards), without editing a theme file.
-- Everything is configured from the UI.
+- **Time of day** picks the glow colors (computed from the sun, adjustable).
+- **Weather** adds particles and dims the glow (from any `weather` entity).
+- It **never changes your theme or your cards**. If your theme or dashboard has no background, it sets one; if it already has one, the glows are drawn as a light overlay instead.
+- Works on any dashboard and any theme. Everything is configured from the UI.
 
 ## Install
 
@@ -42,15 +41,7 @@ Open the integration and choose **Configure**. Pages are saved together with **S
 | Weather effects | effects on/off, rain and snow density and speed, wind tilt, extra density for heavy rain, ripples, lightning, stars, drifting clouds, fog, effect opacity |
 | Performance | maximum frame rate, pause when the tab is hidden, respect reduced motion, halve effects on weak devices, turn effects off on phones |
 | Where it applies | all dashboards, only the listed ones, or all except the listed ones; optionally on other pages too (history, map, settings); only when one of the listed themes is selected |
-| Theme and background | time-of-day background on/off, palette style (none, or border-only cards with Bubble Card variables), card background opacity, use your theme's background color as the base, dark/light/auto, glow intensity, weather dimming, dotted texture, extra CSS variables as JSON |
-
-### Extra CSS variables
-
-Applied last, so they win over everything else:
-
-```json
-{ "dash-on": "#FFB300", "bubble-border-radius": "24px" }
-```
+| Background | background mode (auto, always, overlay only, off), overlay intensity, dark/light/auto, glow intensity, weather dimming, dotted texture |
 
 ## Services
 
@@ -61,7 +52,7 @@ Applied last, so they win over everything else:
 
 ## Notes
 
-- Cards in most themes are opaque, so the glows show mostly around them. Lower **Card background opacity** (for example 60%) to let the background through.
+- In **Auto** mode a background is set only if no theme defines one. Dashboards that paint their own view background can hide it: use **Overlay only** there.
 - Particles are drawn on a canvas above the dashboard, with pointer events disabled. Lower **Effect opacity** if you want them subtler.
-- Home Assistant's own theme is not modified. The integration sets CSS variables on the page and removes them if you turn the options off.
+- Nothing in your theme is modified. The integration may set `--lovelace-background` on the page (Auto/Always) and removes it if you turn the option off.
 - Needs Home Assistant 2025.1 or newer.

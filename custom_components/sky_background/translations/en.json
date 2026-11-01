@@ -99,26 +99,20 @@
       "appearance": {
         "title": "Theme and background",
         "data": {
-          "apply_background": "Set the time-of-day background",
-          "palette_style": "Palette and card style",
-          "card_opacity": "Card background opacity",
-          "use_theme_base_color": "Use the theme's background color as the base",
+          "background_mode": "Time-of-day background",
+          "overlay_intensity": "Overlay intensity",
           "color_mode": "Color mode",
           "background_intensity": "Background glow intensity",
           "weather_dimming": "Weather dimming",
-          "show_dots": "Dotted starfield texture",
-          "custom_variables": "Extra CSS variables (JSON object)"
+          "show_dots": "Dotted starfield texture"
         },
         "data_description": {
-          "custom_variables": "Applied last, so they win over everything else. Example: {\"dash-on\": \"#FFB300\"}",
-          "palette_style": "\"None\" leaves your theme and cards alone and only sets the background.",
-          "card_opacity": "Below 100% the cards let the background show through. 100% leaves the theme untouched.",
-          "use_theme_base_color": "Keeps your theme's own background color under the time-of-day glows."
+          "background_mode": "Auto sets the background only when your theme or dashboard has none, otherwise it draws a light overlay. Your theme and cards are never changed.",
+          "overlay_intensity": "How strong the glows are when drawn as an overlay."
         }
       }
     },
     "error": {
-      "invalid_json": "Enter a valid JSON object.",
       "dashboards_required": "Enter at least one dashboard URL path."
     }
   },
@@ -166,10 +160,12 @@
         "hail": "Hail"
       }
     },
-    "palette_style": {
+    "background_mode": {
       "options": {
-        "none": "None, keep my theme",
-        "border_only": "Border-only cards with Bubble Card variables"
+        "auto": "Auto (only if none is set)",
+        "always": "Always set the background",
+        "overlay": "Overlay only",
+        "off": "Off (effects only)"
       }
     }
   },

@@ -12,7 +12,7 @@
     wind: 20, heavy_rain_multiplier: 180, ripples: true, lightning: true, stars: true, clouds: true,
     fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, respect_reduced_motion: true,
     auto_reduce_weak_devices: true, disable_on_mobile: false, dashboards_mode: "all", dashboards: "",
-    global_opacity: 100, sky_max_height: 100, precip_max_height: 100, cloud_top: 3, cloud_bottom: 45, sky_path: "arc", sky_time_offset_min: 0, show_sun: true, show_moon: true, sun_size: 100, moon_size: 100, sky_objects_opacity: 100, use_real_clouds: true, use_real_wind: true, use_real_visibility: true, layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
+    global_opacity: 100, sky_height: 50, precip_max_height: 100, sky_path: "arc", sky_time_offset_min: 0, show_sun: true, show_moon: true, sun_size: 100, moon_size: 100, sky_objects_opacity: 100, use_real_clouds: true, use_real_wind: true, use_real_visibility: true, layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
     weather_dimming: 100, show_dots: false, only_theme_names: "",
   };
 
@@ -291,14 +291,8 @@
   const cvS = mkCanvas("sky-background-sky"), cvF = mkCanvas("sky-background-canvas");
   const ctxS = cvS.getContext("2d"), ctxF = cvF.getContext("2d");
   let ctx = ctxS;
-  /* the sky is laid out in the top half of the screen; a lower limit squeezes it into that height */
-  const skyK = () => Math.min(1, opts.sky_max_height / 50);
-  /* clouds sit between cloud_top and cloud_bottom (% of the screen height); far clouds lower, near ones higher */
-  const cloudBand = (z) => {
-    const top = clamp(opts.cloud_top, 0, 95) / 100, bottom = Math.max(clamp(opts.cloud_bottom, 5, 100), opts.cloud_top + 5) / 100;
-    const u = clamp((1 - z) * 0.75 + Math.random() * 0.25, 0, 1);
-    return top + (bottom - top) * u;
-  };
+  /* sky_height: share of the screen (from the top) that the sun, moon, stars and clouds are spread over; 50 is the default layout */
+  const skyK = () => Math.max(0.2, opts.sky_height / 50);
   const precipBottom = () => H * opts.precip_max_height / 100;
   const fadeMask = (pct) => (pct >= 100 ? "none" : `linear-gradient(to bottom, #000 0, #000 ${Math.max(0, pct - 10)}%, transparent ${pct}%)`);
   let W = 0, H = 0, dpr = 1, drops = [], flakes = [], hail = [], ripples = [], stars = [], clouds = [], fogs = [];
@@ -361,7 +355,7 @@
     dpr = Math.min(window.devicePixelRatio || 1, 1.5);
     W = innerWidth; H = innerHeight;
     for (const [c, g] of [[cvS, ctxS], [cvF, ctxF]]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0); }
-    stars = Array.from({ length: Math.round(W * H / 14000) }, () => ({ x: Math.random() * W, y: Math.random() * H * 0.75 * skyK(), r: 0.6 + Math.random() * 1.2, p: Math.random() * 6 }));
+    stars = Array.from({ length: Math.round(W * H / 14000) }, () => ({ x: Math.random() * W, y: Math.random() * H * 0.9 * (opts.sky_height / 100), r: 0.6 + Math.random() * 1.2, p: Math.random() * 6 }));
     populate();
   }
   function populate() {
@@ -381,7 +375,7 @@
       const n = Math.round(cloudCover() / 100 * 9 * Math.min(1.4, W / 900 + 0.4));
       for (let i = 0; i < n; i++) {
         const z = 0.3 + Math.random() * 0.7;
-        clouds.push({ x: Math.random() * (W + 900) - 700, y: H * cloudBand(z) * skyK(), z, s: 0.6 + z * 1.2, k: Math.floor(Math.random() * 4) });
+        clouds.push({ x: Math.random() * (W + 900) - 700, y: H * (0.03 + (1 - z) * 0.3 + Math.random() * 0.12) * skyK(), z, s: 0.6 + z * 1.2, k: Math.floor(Math.random() * 4) });
       }
     }
     if (opts.fog && haze() > 0.12) for (let i = 0; i < 7; i++) fogs.push({ x: Math.random() * (W + 420) - 420, y: H * (0.1 + Math.random() * 0.8) * skyK(), s: 1 + Math.random() * 1.4, v: 6 + Math.random() * 8 });
@@ -523,7 +517,7 @@
     const g = opts.global_opacity / 100;
     cvS.style.display = "block"; cvS.style.opacity = String(g);
     cvF.style.display = "block"; cvF.style.opacity = String((opts.particle_opacity / 100) * g);
-    for (const [c, pct] of [[cvS, opts.sky_max_height], [cvF, opts.precip_max_height]]) c.style.webkitMaskImage = c.style.maskImage = fadeMask(pct);
+    for (const [c, pct] of [[cvS, Math.min(100, opts.sky_height + 15)], [cvF, opts.precip_max_height]]) c.style.webkitMaskImage = c.style.maskImage = fadeMask(pct);
     mount(cvS, 3); mount(cvF, 3);
     if (!running) { running = true; last = 0; rafId = requestAnimationFrame(frame); }
   }

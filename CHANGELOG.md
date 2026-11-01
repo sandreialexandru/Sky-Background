@@ -6,6 +6,11 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.3.0] - 2026-11-01
+
+### Changed
+- The sky height settings are now one slider, "Sky height": how much of the screen (from the top) the sun, moon, stars and clouds are spread over. It replaces "sky max height", "highest clouds" and "lowest clouds". Rain and snow keep their own "fall down to" slider. Saved values of the removed options are ignored.
+
 ## [0.2.0] - 2026-11-01
 
 ### Added
@@ -33,6 +38,7 @@ First public version.
 ### Notes
 - The integration never changes your theme or your cards.
 
-[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.2.0...HEAD
+[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.0...HEAD
+[0.3.0]: https://github.com/sandreialexandru/Sky-Background/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/sandreialexandru/Sky-Background/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/sandreialexandru/Sky-Background/releases/tag/v0.1.0

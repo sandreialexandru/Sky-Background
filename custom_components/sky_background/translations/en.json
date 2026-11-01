@@ -83,10 +83,8 @@
           "sky_path": "Sun and moon path",
           "sky_time_offset_min": "Time offset for the sun and moon",
           "global_opacity": "Overall opacity (everything)",
-          "sky_max_height": "Highest the sun, moon, clouds and stars go (screen height)",
-          "precip_max_height": "Lowest the rain and snow reach (screen height)",
-          "cloud_top": "Highest clouds (from the top of the screen)",
-          "cloud_bottom": "Lowest clouds (from the top of the screen)"
+          "precip_max_height": "Rain and snow fall down to",
+          "sky_height": "Sky height"
         },
         "data_description": {
           "layer": "Behind the cards works on standard Home Assistant dashboards. If it can't find the dashboard background it falls back to above.",
@@ -94,9 +92,8 @@
           "sky_path": "Arc crosses the screen from rise to set in any season. Compass follows the real direction.",
           "sky_time_offset_min": "Shifts the sun and moon in time, for example to preview sunset. Positions use the exact time and the Home Assistant location, so the time zone and daylight saving are already handled.",
           "global_opacity": "Scales every effect and the background glow at once. The other opacity sliders fine-tune on top of it.",
-          "sky_max_height": "Everything in the sky is squeezed to fit and fades out below this height. 100% leaves the sky as is.",
-          "precip_max_height": "Rain, snow and hail stop and fade at this height. 100% means the full screen.",
-          "cloud_top": "Clouds are spread between these two heights, far ones lower and near ones higher. Lower the first value to raise the cloud ceiling, raise the second to let clouds reach further down. The sky height limit above can still squeeze them."
+          "precip_max_height": "How far down rain, snow and hail fall. 100% is the full screen.",
+          "sky_height": "How much of the screen, from the top, the sky takes. The sun, moon, stars and clouds are spread inside it. 50% is the default. Raise it to bring the clouds and the horizon lower, lower it to keep everything near the top."
         }
       },
       "performance": {

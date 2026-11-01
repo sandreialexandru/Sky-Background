@@ -47,7 +47,7 @@ Open the integration and choose **Configure**. Pages are saved together with **S
 | --- | --- |
 | Weather source and mapping | weather entity, outdoor temperature sensor, treat *partly cloudy* as clear or cloudy, turn rain into snow below a temperature |
 | Time-of-day periods | minutes before/after sunrise, half-width of midday around solar noon, when evening starts before sunset and how long it lasts after |
-| Weather effects | effects on/off, rain and snow density and speed, wind tilt, extra density for heavy rain, ripples, lightning, stars, drifting clouds, fog, effect opacity, draw behind or above the cards, overall opacity, highest point of the sky elements and lowest point of rain and snow, sun and moon (size, opacity), cloud amount, wind and haze taken from the weather entity |
+| Weather effects | effects on/off, rain and snow density and speed, wind tilt, extra density for heavy rain, ripples, lightning, stars, drifting clouds, fog, effect opacity, draw behind or above the cards, overall opacity, sky height, how far down rain and snow fall, sun and moon (size, opacity), cloud amount, wind and haze taken from the weather entity |
 | Performance | maximum frame rate, pause when the tab is hidden, respect reduced motion, halve effects on weak devices, turn effects off on phones |
 | Where it applies | all dashboards, only the listed ones, or all except the listed ones; optionally on other pages too (history, map, settings); only when one of the listed themes is selected |
 | Background | background mode (auto, always, overlay only, off), overlay intensity, dark/light/auto, glow intensity, weather dimming, dotted texture |

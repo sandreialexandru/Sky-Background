@@ -86,6 +86,7 @@
       "scope": {
         "title": "Unde se aplică",
         "data": {
+          "everywhere": "Și pe alte pagini (istoric, hartă, setări…)",
           "dashboards_mode": "Dashboard-uri",
           "dashboards": "Căi URL ale dashboard-urilor (separate prin virgulă)",
           "only_theme_names": "Doar când e aleasă una dintre aceste teme (separate prin virgulă, gol = mereu)"
@@ -99,7 +100,9 @@
         "title": "Temă și fundal",
         "data": {
           "apply_background": "Setează fundalul după ora din zi",
-          "apply_palette": "Aplică paleta doar cu borduri și variabilele Bubble Card",
+          "palette_style": "Paletă și stil de carduri",
+          "card_opacity": "Opacitatea fundalului cardurilor",
+          "use_theme_base_color": "Folosește culoarea de fundal a temei ca bază",
           "color_mode": "Mod de culoare",
           "background_intensity": "Intensitatea luminilor din fundal",
           "weather_dimming": "Întunecare după vreme",
@@ -107,7 +110,10 @@
           "custom_variables": "Variabile CSS suplimentare (obiect JSON)"
         },
         "data_description": {
-          "custom_variables": "Se aplică ultimele, deci au prioritate. Exemplu: {\"dash-on\": \"#FFB300\"}"
+          "custom_variables": "Se aplică ultimele, deci au prioritate. Exemplu: {\"dash-on\": \"#FFB300\"}",
+          "palette_style": "„Niciuna” lasă tema și cardurile în pace și setează doar fundalul.",
+          "card_opacity": "Sub 100% cardurile lasă fundalul să se vadă. 100% nu modifică tema.",
+          "use_theme_base_color": "Păstrează culoarea de fundal a temei tale sub luminile după oră."
         }
       }
     },
@@ -118,7 +124,10 @@
   },
   "selector": {
     "partlycloudy_as": {
-      "options": { "clear": "Senin", "cloudy": "Noros" }
+      "options": {
+        "clear": "Senin",
+        "cloudy": "Noros"
+      }
     },
     "dashboards_mode": {
       "options": {
@@ -128,7 +137,11 @@
       }
     },
     "color_mode": {
-      "options": { "auto": "Ca Home Assistant", "dark": "Mereu întunecat", "light": "Mereu luminos" }
+      "options": {
+        "auto": "Ca Home Assistant",
+        "dark": "Mereu întunecat",
+        "light": "Mereu luminos"
+      }
     },
     "period": {
       "options": {
@@ -151,6 +164,12 @@
         "snow": "Ninsoare",
         "sleet": "Lapoviță",
         "hail": "Grindină"
+      }
+    },
+    "palette_style": {
+      "options": {
+        "none": "Niciuna, păstrează tema mea",
+        "border_only": "Carduri doar cu bordură și variabile Bubble Card"
       }
     }
   },
@@ -188,9 +207,18 @@
       "name": "Forțează",
       "description": "Forțează o perioadă și/sau un efect o vreme, ca să previzualizezi aspectul.",
       "fields": {
-        "period": { "name": "Perioadă", "description": "Perioada zilei de afișat." },
-        "effect": { "name": "Efect", "description": "Efectul meteo de afișat." },
-        "duration": { "name": "Durată", "description": "Cât ține forțarea." }
+        "period": {
+          "name": "Perioadă",
+          "description": "Perioada zilei de afișat."
+        },
+        "effect": {
+          "name": "Efect",
+          "description": "Efectul meteo de afișat."
+        },
+        "duration": {
+          "name": "Durată",
+          "description": "Cât ține forțarea."
+        }
       }
     },
     "clear_override": {

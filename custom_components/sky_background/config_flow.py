@@ -82,13 +82,16 @@ PAGES: dict[str, dict[str, Any]] = {
         "disable_on_mobile": _BOOL,
     },
     "scope": {
+        "everywhere": _BOOL,
         "dashboards_mode": _choice(["all", "include", "exclude"], "dashboards_mode"),
         "dashboards": _TEXT,
         "only_theme_names": _TEXT,
     },
     "appearance": {
         "apply_background": _BOOL,
-        "apply_palette": _BOOL,
+        "palette_style": _choice(["none", "border_only"], "palette_style"),
+        "card_opacity": _num(10, 100, 5, "%"),
+        "use_theme_base_color": _BOOL,
         "color_mode": _choice(["auto", "dark", "light"], "color_mode"),
         "background_intensity": _num(0, 200, 5, "%"),
         "weather_dimming": _num(0, 200, 5, "%"),

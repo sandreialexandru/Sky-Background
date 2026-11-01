@@ -13,7 +13,7 @@
     wind: 20, heavy_rain_multiplier: 180, ripples: true, lightning: true, stars: true, clouds: true,
     fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, respect_reduced_motion: true,
     auto_reduce_weak_devices: true, disable_on_mobile: false, dashboards_mode: "all", dashboards: "",
-    apply_background: true, apply_palette: true, color_mode: "auto", background_intensity: 100,
+    apply_background: true, palette_style: "none", card_opacity: 100, use_theme_base_color: false, everywhere: false, color_mode: "auto", background_intensity: 100,
     weather_dimming: 100, show_dots: true, only_theme_names: "", custom_variables: "",
   };
 
@@ -156,7 +156,8 @@
   function buildVars(period, effect, dark, o) {
     const vars = {};
     const mode = dark ? "dark" : "light";
-    if (o.apply_palette) Object.assign(vars, BASE, dark ? DARK : LIGHT);
+    if (o.palette_style === "border_only") Object.assign(vars, BASE, dark ? DARK : LIGHT);
+    if (o.card_opacity < 100) vars["ha-card-background"] = `color-mix(in srgb, var(--card-background-color) ${o.card_opacity}%, transparent)`;
     if (o.apply_background) {
       const [base, glows] = SKY[mode][period] || SKY[mode].night;
       const k = o.background_intensity / 100;
@@ -178,7 +179,7 @@
         const alpha = Math.min(1, a * k * (warm ? warmCut : 1)).toFixed(3);
         layers.push(`radial-gradient(circle 60vmax at ${x} ${y}, rgba(${c},${alpha}), rgba(${c},0)) fixed`);
       }
-      vars["lovelace-background"] = `${layers.join(", ")}, ${base}`;
+      vars["lovelace-background"] = `${layers.join(", ")}, ${o.use_theme_base_color ? "var(--primary-background-color)" : base}`;
     }
     if (o.custom_variables) {
       try { Object.entries(JSON.parse(o.custom_variables)).forEach(([k, v]) => { vars[k.replace(/^--/, "")] = String(v); }); } catch (e) { /* ignored */ }
@@ -200,7 +201,8 @@
   const dashboardAllowed = () => {
     const seg = location.pathname.split("/")[1] || "";
     const panel = hass && hass.panels && hass.panels[seg];
-    if (!panel || panel.component_name !== "lovelace") return false;
+    const isDash = panel && (panel.component_name === "lovelace" || panel.component_name === "home");
+    if (!isDash && !opts.everywhere) return false;
     const list = String(opts.dashboards || "").split(",").map((s) => s.trim()).filter(Boolean);
     if (opts.dashboards_mode === "include") return list.includes(seg);
     if (opts.dashboards_mode === "exclude") return !list.includes(seg);
@@ -219,7 +221,7 @@
     return !!root.style.getPropertyValue(MARK);
   }
   function applyTheme(force) {
-    if (!themeAllowed() || (!opts.apply_palette && !opts.apply_background && !opts.custom_variables)) { if (Object.keys(applied).length) clearVars(); return; }
+    if (!themeAllowed() || (opts.palette_style === "none" && !opts.apply_background && !opts.custom_variables && opts.card_opacity >= 100)) { if (Object.keys(applied).length) clearVars(); return; }
     const key = [period, effect, isDark(), JSON.stringify(opts)].join("|");
     if (!force && key === appliedKey && intact()) return;
     const next = buildVars(period, effect, isDark(), opts);

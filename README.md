@@ -9,7 +9,7 @@ A Home Assistant integration that adds a background glow and weather effects tha
 
 ## How it looks
 
-- **Sun and moon** are drawn at their real position for your Home Assistant location (computed from the date and time), and cross the screen east to west. The sun turns orange near the horizon. The moon shows its real phase. Heavy cloud, rain or fog dims them.
+- **Sun and moon** are placed from the exact time and your Home Assistant location, so time zone and daylight saving are handled automatically. By default they travel along an arc from the left edge at rise to the right edge at set (highest at the peak, so it follows the real day length in every season). Switch to the real compass direction in the options, or shift them in time to preview sunset. The sun turns orange near the horizon. The moon shows its real phase. Heavy cloud, rain or fog dims them.
 - **Clouds** are generated soft shapes. Their amount follows the weather entity's `cloud_coverage`, and their color follows the light (warm at dawn and dusk, blue-grey at night, darker in rain and storms).
 - **Wind** speed and direction (`wind_speed`, `wind_bearing`) tilt the rain and push snow and clouds. **Visibility** adds haze. Each can be turned off.
 - Stars show only when the sun is well below the horizon and the sky is clear.

@@ -79,11 +79,15 @@
           "sky_objects_opacity": "Opacitatea soarelui și a lunii",
           "use_real_clouds": "Cantitatea de nori din entitatea de vreme (acoperire cu nori)",
           "use_real_wind": "Viteza și direcția vântului din entitatea de vreme",
-          "use_real_visibility": "Ceață din entitatea de vreme (vizibilitate)"
+          "use_real_visibility": "Ceață din entitatea de vreme (vizibilitate)",
+          "sky_path": "Traseul soarelui și al lunii",
+          "sky_time_offset_min": "Decalaj de timp pentru soare și lună"
         },
         "data_description": {
           "layer": "În spatele cardurilor merge pe dashboard-urile standard Home Assistant. Dacă nu găsește fundalul dashboard-ului, desenează peste carduri.",
-          "show_sun": "Soarele și luna urmează poziția reală pentru locația din Home Assistant. Norii, vântul și ceața folosesc entitatea de vreme când oferă aceste date."
+          "show_sun": "Soarele și luna urmează poziția reală pentru locația din Home Assistant. Norii, vântul și ceața folosesc entitatea de vreme când oferă aceste date.",
+          "sky_path": "Arcul traversează ecranul de la răsărit la apus în orice anotimp. Busola urmează direcția reală.",
+          "sky_time_offset_min": "Mută soarele și luna în timp, de exemplu ca să previzualizezi apusul. Pozițiile folosesc ora exactă și locația din Home Assistant, deci fusul orar și ora de vară sunt deja luate în calcul."
         }
       },
       "performance": {
@@ -185,6 +189,12 @@
       "options": {
         "behind": "În spatele cardurilor (peste fundal)",
         "above": "Peste carduri"
+      }
+    },
+    "sky_path": {
+      "options": {
+        "arc": "Arc de la răsărit la apus",
+        "azimuth": "Direcția reală (busolă)"
       }
     }
   },

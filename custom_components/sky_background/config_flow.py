@@ -73,6 +73,8 @@ PAGES: dict[str, dict[str, Any]] = {
         "fog": _BOOL,
         "particle_opacity": _num(10, 100, 5, "%"),
         "layer": _choice(["behind", "above"], "layer"),
+        "sky_path": _choice(["arc", "azimuth"], "sky_path"),
+        "sky_time_offset_min": _num(-720, 720, 5, "min"),
         "show_sun": _BOOL,
         "show_moon": _BOOL,
         "sun_size": _num(40, 250, 10, "%"),

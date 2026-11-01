@@ -79,11 +79,15 @@
           "sky_objects_opacity": "Sun and moon opacity",
           "use_real_clouds": "Cloud amount from the weather entity (cloud coverage)",
           "use_real_wind": "Wind speed and direction from the weather entity",
-          "use_real_visibility": "Haze from the weather entity (visibility)"
+          "use_real_visibility": "Haze from the weather entity (visibility)",
+          "sky_path": "Sun and moon path",
+          "sky_time_offset_min": "Time offset for the sun and moon"
         },
         "data_description": {
           "layer": "Behind the cards works on standard Home Assistant dashboards. If it can't find the dashboard background it falls back to above.",
-          "show_sun": "The sun and moon follow their real position for your Home Assistant location. Clouds, wind and haze use the weather entity when it provides them."
+          "show_sun": "The sun and moon follow their real position for your Home Assistant location. Clouds, wind and haze use the weather entity when it provides them.",
+          "sky_path": "Arc crosses the screen from rise to set in any season. Compass follows the real direction.",
+          "sky_time_offset_min": "Shifts the sun and moon in time, for example to preview sunset. Positions use the exact time and the Home Assistant location, so the time zone and daylight saving are already handled."
         }
       },
       "performance": {
@@ -185,6 +189,12 @@
       "options": {
         "behind": "Behind the cards (over the background)",
         "above": "Above the cards"
+      }
+    },
+    "sky_path": {
+      "options": {
+        "arc": "Arc from rise to set",
+        "azimuth": "Real compass direction"
       }
     }
   },

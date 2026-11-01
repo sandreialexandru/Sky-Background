@@ -12,7 +12,7 @@
     wind: 20, heavy_rain_multiplier: 180, ripples: true, lightning: true, stars: true, clouds: true,
     fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, respect_reduced_motion: true,
     auto_reduce_weak_devices: true, disable_on_mobile: false, dashboards_mode: "all", dashboards: "",
-    show_sun: true, show_moon: true, sun_size: 100, moon_size: 100, sky_objects_opacity: 100, use_real_clouds: true, use_real_wind: true, use_real_visibility: true, layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
+    sky_path: "arc", sky_time_offset_min: 0, show_sun: true, show_moon: true, sun_size: 100, moon_size: 100, sky_objects_opacity: 100, use_real_clouds: true, use_real_wind: true, use_real_visibility: true, layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
     weather_dimming: 100, show_dots: false, only_theme_names: "",
   };
 
@@ -224,13 +224,28 @@
       phase: 0.5 + 0.5 * inc * (ang < 0 ? -1 : 1) / Math.PI,
     };
   }
-  let sky = { sunAlt: -30, sunAz: 0, moonAlt: -30, moonAz: 0, phase: 0 }, skyAt = 0;
+  let sky = { sunAlt: -30, sunAz: 0, moonAlt: -30, moonAz: 0, phase: 0, sunArc: null, moonArc: null }, skyAt = 0;
+  /* Rise to set arc of a body that is above the horizon now: fraction of the way across and its highest point.
+   * Works on absolute time, so the time zone and daylight saving only matter for the viewer's clock, not here. */
+  function bodyArc(alt, nowMs) {
+    if (alt(nowMs) < 0) return null;
+    const step = 10 * 60000, cap = 30 * 3600000;
+    let rise = nowMs, set = nowMs, peak = alt(nowMs);
+    while (nowMs - rise < cap && alt(rise - step) >= 0) { rise -= step; peak = Math.max(peak, alt(rise)); }
+    while (set - nowMs < cap && alt(set + step) >= 0) { set += step; peak = Math.max(peak, alt(set)); }
+    if (nowMs - rise >= cap || set - nowMs >= cap) return null;
+    return { frac: clamp((nowMs - rise) / Math.max(step, set - rise), 0, 1), peak };
+  }
   function updateSky(force) {
-    const now = Date.now();
-    if (!force && now - skyAt < 10000) return;
-    skyAt = now;
+    const real = Date.now();
+    if (!force && real - skyAt < 10000) return;
+    skyAt = real;
     const c = (hass && hass.config) || {};
-    if (typeof c.latitude === "number" && typeof c.longitude === "number") sky = skyPositions(new Date(), c.latitude, c.longitude);
+    if (typeof c.latitude !== "number" || typeof c.longitude !== "number") return;
+    const nowMs = real + (opts.sky_time_offset_min || 0) * 60000;
+    sky = skyPositions(new Date(nowMs), c.latitude, c.longitude);
+    sky.sunArc = bodyArc((ms) => skyPositions(new Date(ms), c.latitude, c.longitude).sunAlt, nowMs);
+    sky.moonArc = bodyArc((ms) => skyPositions(new Date(ms), c.latitude, c.longitude).moonAlt, nowMs);
   }
   const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
 
@@ -361,15 +376,21 @@
   }
 
   /* sky position -> screen: east-ish on the left, west-ish on the right, higher sun = higher on screen */
-  const skyX = (az) => clamp(((az - 60) / 240) * W, 36, W - 36);
-  const skyY = (alt) => H * (0.3 - 0.26 * clamp(alt, -8, 70) / 70);
-  const edgeFade = (az) => (az < 25 || az > 335 ? 0 : 1);
+  /* "arc": from the left edge at rise to the right edge at set, highest at the peak (follows the real day length
+   * in any season). "azimuth": the real compass direction. */
+  function skyPoint(az, altDeg, arc) {
+    if (opts.sky_path === "arc" && arc) {
+      return [W * (0.07 + 0.86 * arc.frac), H * (0.3 - 0.24 * Math.sin(Math.PI * arc.frac) * clamp(arc.peak / 55, 0.4, 1))];
+    }
+    return [clamp(((az - 60) / 240) * W, 36, W - 36), H * (0.3 - 0.26 * clamp(altDeg, -8, 70) / 70)];
+  }
+  const edgeFade = (az, arc) => (opts.sky_path === "arc" && arc ? 1 : az < 25 || az > 335 ? 0 : 1);
 
   function drawSun(alpha) {
     if (!opts.show_sun || sky.sunAlt < -4) return;
-    const a = clamp((sky.sunAlt + 3) / 9, 0, 1) * clarity() * alpha * edgeFade(sky.sunAz);
+    const a = clamp((sky.sunAlt + 3) / 9, 0, 1) * clarity() * alpha * edgeFade(sky.sunAz, sky.sunArc);
     if (a < 0.01) return;
-    const x = skyX(sky.sunAz), y = skyY(sky.sunAlt), size = 190 * opts.sun_size / 100;
+    const [x, y] = skyPoint(sky.sunAz, sky.sunAlt, sky.sunArc), size = 190 * opts.sun_size / 100;
     const alt = sky.sunAlt;
     const mix = alt <= 4 ? [["low", 1]] : alt <= 12 ? [["low", 1 - (alt - 4) / 8], ["mid", (alt - 4) / 8]] : alt <= 22 ? [["mid", 1 - (alt - 12) / 10], ["high", (alt - 12) / 10]] : [["high", 1]];
     for (const [name, w] of mix) { ctx.globalAlpha = a * w * 0.95; ctx.drawImage(sunSprites[name], x - size / 2, y - size / 2, size, size); }
@@ -378,9 +399,9 @@
   function drawMoon(alpha) {
     if (!opts.show_moon || sky.moonAlt < -4) return;
     const dayFactor = sky.sunAlt > -4 ? 0.3 : 1;
-    const a = clamp((sky.moonAlt + 3) / 9, 0, 1) * clarity() * alpha * dayFactor * edgeFade(sky.moonAz);
+    const a = clamp((sky.moonAlt + 3) / 9, 0, 1) * clarity() * alpha * dayFactor * edgeFade(sky.moonAz, sky.moonArc);
     if (a < 0.01) return;
-    const x = skyX(sky.moonAz), y = skyY(sky.moonAlt), r = 17 * opts.moon_size / 100;
+    const [x, y] = skyPoint(sky.moonAz, sky.moonAlt, sky.moonArc), r = 17 * opts.moon_size / 100;
     const k = Math.cos(sky.phase * 2 * Math.PI), waxing = sky.phase < 0.5;
     ctx.save();
     ctx.globalAlpha = a * 0.9;

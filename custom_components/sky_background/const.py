@@ -41,6 +41,8 @@ FRONTEND_KEYS = [
     "disable_on_mobile",
     "dashboards_mode",
     "dashboards",
+    "sky_path",
+    "sky_time_offset_min",
     "show_sun",
     "show_moon",
     "sun_size",
@@ -99,6 +101,8 @@ DEFAULTS: dict = {
     "dashboards_mode": "all",
     "dashboards": "",
     # appearance
+    "sky_path": "arc",
+    "sky_time_offset_min": 0,
     "show_sun": True,
     "show_moon": True,
     "sun_size": 100,

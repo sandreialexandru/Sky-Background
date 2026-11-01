@@ -7,6 +7,13 @@ A Home Assistant integration that adds a background glow and weather effects tha
 - It **never changes your theme or your cards**. If your theme or dashboard has no background, it sets one; if it already has one, the glows are drawn as a light overlay instead.
 - Works on any dashboard and any theme. Everything is configured from the UI.
 
+## How it looks
+
+- **Sun and moon** are drawn at their real position for your Home Assistant location (computed from the date and time), and cross the screen east to west. The sun turns orange near the horizon. The moon shows its real phase. Heavy cloud, rain or fog dims them.
+- **Clouds** are generated soft shapes. Their amount follows the weather entity's `cloud_coverage`, and their color follows the light (warm at dawn and dusk, blue-grey at night, darker in rain and storms).
+- **Wind** speed and direction (`wind_speed`, `wind_bearing`) tilt the rain and push snow and clouds. **Visibility** adds haze. Each can be turned off.
+- Stars show only when the sun is well below the horizon and the sky is clear.
+
 ## Install
 
 ### HACS (custom repository)
@@ -38,7 +45,7 @@ Open the integration and choose **Configure**. Pages are saved together with **S
 | --- | --- |
 | Weather source and mapping | weather entity, outdoor temperature sensor, treat *partly cloudy* as clear or cloudy, turn rain into snow below a temperature |
 | Time-of-day periods | minutes before/after sunrise, half-width of midday around solar noon, when evening starts before sunset and how long it lasts after |
-| Weather effects | effects on/off, rain and snow density and speed, wind tilt, extra density for heavy rain, ripples, lightning, stars, drifting clouds, fog, effect opacity, draw behind or above the cards |
+| Weather effects | effects on/off, rain and snow density and speed, wind tilt, extra density for heavy rain, ripples, lightning, stars, drifting clouds, fog, effect opacity, draw behind or above the cards, sun and moon (size, opacity), cloud amount, wind and haze taken from the weather entity |
 | Performance | maximum frame rate, pause when the tab is hidden, respect reduced motion, halve effects on weak devices, turn effects off on phones |
 | Where it applies | all dashboards, only the listed ones, or all except the listed ones; optionally on other pages too (history, map, settings); only when one of the listed themes is selected |
 | Background | background mode (auto, always, overlay only, off), overlay intensity, dark/light/auto, glow intensity, weather dimming, dotted texture |

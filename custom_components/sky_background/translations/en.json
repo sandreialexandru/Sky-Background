@@ -71,10 +71,19 @@
           "clouds": "Drifting clouds",
           "fog": "Fog",
           "particle_opacity": "Effect opacity",
-          "layer": "Where the effects are drawn"
+          "layer": "Where the effects are drawn",
+          "show_sun": "Draw the sun",
+          "show_moon": "Draw the moon (with its real phase)",
+          "sun_size": "Sun size",
+          "moon_size": "Moon size",
+          "sky_objects_opacity": "Sun and moon opacity",
+          "use_real_clouds": "Cloud amount from the weather entity (cloud coverage)",
+          "use_real_wind": "Wind speed and direction from the weather entity",
+          "use_real_visibility": "Haze from the weather entity (visibility)"
         },
         "data_description": {
-          "layer": "Behind the cards works on standard Home Assistant dashboards. If it can't find the dashboard background it falls back to above."
+          "layer": "Behind the cards works on standard Home Assistant dashboards. If it can't find the dashboard background it falls back to above.",
+          "show_sun": "The sun and moon follow their real position for your Home Assistant location. Clouds, wind and haze use the weather entity when it provides them."
         }
       },
       "performance": {

@@ -69,6 +69,7 @@ class SkyCoordinator(DataUpdateCoordinator[dict[str, Any]]):
         now = dt_util.now()
         period = self._period(now)
         condition, temperature = self._weather()
+        weather_attrs = self._weather_attrs()
         effect = self._effect(condition, temperature)
 
         overridden = False
@@ -85,6 +86,7 @@ class SkyCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             "condition": condition,
             "temperature": temperature,
             "overridden": overridden,
+            "weather_attrs": weather_attrs,
             "options": {k: self.opts[k] for k in FRONTEND_KEYS},
         }
 
@@ -148,6 +150,28 @@ class SkyCoordinator(DataUpdateCoordinator[dict[str, Any]]):
             if (value := _to_float(st.state)) is not None:
                 temperature = value
         return condition, temperature
+
+    def _weather_attrs(self) -> dict[str, Any]:
+        """Real-time details the frontend uses for clouds, wind and haze."""
+        wid = self.opts["weather_entity"]
+        st = self.hass.states.get(wid) if wid else None
+        if st is None:
+            return {}
+        keys = (
+            "cloud_coverage",
+            "wind_speed",
+            "wind_speed_unit",
+            "wind_bearing",
+            "visibility",
+            "visibility_unit",
+        )
+        out: dict[str, Any] = {}
+        for key in keys:
+            value = st.attributes.get(key)
+            if value is None:
+                continue
+            out[key] = value
+        return out
 
     def _effect(self, condition: str | None, temperature: float | None) -> str:
         effect = CONDITION_EFFECT.get(condition or "", "clear")

@@ -71,10 +71,19 @@
           "clouds": "Nori în mișcare",
           "fog": "Ceață",
           "particle_opacity": "Opacitatea efectelor",
-          "layer": "Unde se desenează efectele"
+          "layer": "Unde se desenează efectele",
+          "show_sun": "Desenează soarele",
+          "show_moon": "Desenează luna (cu faza reală)",
+          "sun_size": "Mărimea soarelui",
+          "moon_size": "Mărimea lunii",
+          "sky_objects_opacity": "Opacitatea soarelui și a lunii",
+          "use_real_clouds": "Cantitatea de nori din entitatea de vreme (acoperire cu nori)",
+          "use_real_wind": "Viteza și direcția vântului din entitatea de vreme",
+          "use_real_visibility": "Ceață din entitatea de vreme (vizibilitate)"
         },
         "data_description": {
-          "layer": "În spatele cardurilor merge pe dashboard-urile standard Home Assistant. Dacă nu găsește fundalul dashboard-ului, desenează peste carduri."
+          "layer": "În spatele cardurilor merge pe dashboard-urile standard Home Assistant. Dacă nu găsește fundalul dashboard-ului, desenează peste carduri.",
+          "show_sun": "Soarele și luna urmează poziția reală pentru locația din Home Assistant. Norii, vântul și ceața folosesc entitatea de vreme când oferă aceste date."
         }
       },
       "performance": {

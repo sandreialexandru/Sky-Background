@@ -57,6 +57,7 @@ class SkyPeriodSensor(_Base):
             "temperature": data.get("temperature"),
             "overridden": data.get("overridden"),
             "options": data.get("options", {}),
+            **data.get("weather_attrs", {}),
         }
 
 

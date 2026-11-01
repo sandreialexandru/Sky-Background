@@ -101,9 +101,13 @@
         "data": {
           "max_fps": "Maximum frame rate",
           "pause_when_hidden": "Pause when the tab is hidden",
+          "pause_on_interaction": "Pause while touching or when a pop-up is open",
           "respect_reduced_motion": "Respect the device's reduced-motion setting",
           "auto_reduce_weak_devices": "Halve the effects on weak devices",
           "disable_on_mobile": "Turn effects off on phones"
+        },
+        "data_description": {
+          "pause_on_interaction": "Keeps sliders and pop-ups smooth: nothing is redrawn while you press, drag, or have a pop-up (address with #) open."
         }
       },
       "scope": {

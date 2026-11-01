@@ -10,7 +10,7 @@
   const DEFAULTS = {
     effects_enabled: true, rain_density: 100, snow_density: 100, rain_speed: 100, snow_speed: 100,
     wind: 20, heavy_rain_multiplier: 180, ripples: true, lightning: true, stars: true, clouds: true,
-    fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, respect_reduced_motion: true,
+    fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, pause_on_interaction: true, respect_reduced_motion: true,
     auto_reduce_weak_devices: true, disable_on_mobile: false, dashboards_mode: "all", dashboards: "",
     global_opacity: 100, sky_height: 50, precip_max_height: 100, sky_path: "arc", sky_time_offset_min: 0, show_sun: true, show_moon: true, sun_size: 100, moon_size: 100, sky_objects_opacity: 100, use_real_clouds: true, use_real_wind: true, use_real_visibility: true, layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
     weather_dimming: 100, show_dots: false, only_theme_names: "",
@@ -296,7 +296,7 @@
   const precipBottom = () => H * opts.precip_max_height / 100;
   const fadeMask = (pct) => (pct >= 100 ? "none" : `linear-gradient(to bottom, #000 0, #000 ${Math.max(0, pct - 10)}%, transparent ${pct}%)`);
   let W = 0, H = 0, dpr = 1, drops = [], flakes = [], hail = [], ripples = [], stars = [], clouds = [], fogs = [];
-  let t = 0, last = 0, flash = 0, nextFlash = 5, running = false, rafId = 0, fogSprite = null, cloudSprites = [], cloudKey = "";
+  let t = 0, last = 0, lastSky = 0, flash = 0, nextFlash = 5, running = false, rafId = 0, fogSprite = null, cloudSprites = [], cloudKey = "";
   let sunSprites = null, moonHalo = null;
 
   const weak = () => (navigator.hardwareConcurrency || 8) <= 4 || (navigator.deviceMemory || 8) <= 2;
@@ -352,7 +352,7 @@
   }
 
   function resize() {
-    dpr = Math.min(window.devicePixelRatio || 1, 1.5);
+    dpr = 1;
     W = innerWidth; H = innerHeight;
     for (const [c, g] of [[cvS, ctxS], [cvF, ctxF]]) { c.width = Math.round(W * dpr); c.height = Math.round(H * dpr); g.setTransform(dpr, 0, 0, dpr, 0, 0); }
     stars = Array.from({ length: Math.round(W * H / 14000) }, () => ({ x: Math.random() * W, y: Math.random() * H * 0.9 * (opts.sky_height / 100), r: 0.6 + Math.random() * 1.2, p: Math.random() * 6 }));
@@ -430,15 +430,23 @@
     rafId = requestAnimationFrame(frame);
     const animated = drops.length || flakes.length || hail.length || clouds.length || fogs.length || (opts.stars && isDark() && sky.sunAlt < -4);
     const step = animated ? 1000 / Math.max(10, opts.max_fps) : 1000;
+    if (opts.pause_on_interaction && (touching || location.hash)) { last = now; lastSky = now; return; }
     if (now - last < step) return;
     const dt = Math.min(0.1, (now - last) / 1000 || 0.033); last = now; t += dt;
     const k = dt * 60;
-    ctxS.clearRect(0, 0, W, H); ctxF.clearRect(0, 0, W, H);
+    ctxF.clearRect(0, 0, W, H);
+    /* the sky (sun, moon, stars, clouds) moves slowly: redraw it about 11 times a second, or once a second when still */
+    const skyAnimated = clouds.length || fogs.length || (opts.stars && isDark() && sky.sunAlt < -4);
+    const doSky = now - lastSky >= (skyAnimated ? 90 : 1000);
+    const dts = doSky ? Math.min(0.25, (now - lastSky) / 1000 || 0.1) : 0;
+    if (doSky) lastSky = now;
     ctx = ctxS;
     const dark = isDark();
     const alpha = opts.sky_objects_opacity / 100;
     const wnd = windInfo();
 
+    if (doSky) {
+    ctxS.clearRect(0, 0, W, H);
     if (opts.stars && dark && sky.sunAlt < -4) {
       const base = clamp((-4 - sky.sunAlt) / 10, 0, 1) * clarity();
       if (base > 0.02) for (const s of stars) { ctx.fillStyle = `rgba(255,255,255,${((0.25 + 0.35 * Math.sin(t * 1.2 + s.p)) * base).toFixed(3)})`; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, 6.283); ctx.fill(); }
@@ -450,14 +458,15 @@
     for (const c of clouds) {
       ctx.globalAlpha = Math.min(1, (0.45 + 0.55 * c.z) * cloudAlpha * (dark ? 1 : 0.9));
       ctx.drawImage(cloudSprites[c.k], c.x, c.y, 520 * c.s, 200 * c.s);
-      c.x += (wnd.dirX * (4 + wnd.strength * 34)) * (0.35 + c.z) * dt;
+      c.x += (wnd.dirX * (4 + wnd.strength * 34)) * (0.35 + c.z) * dts;
       if (c.x > W + 40) c.x = -520 * c.s; else if (c.x < -520 * c.s - 40) c.x = W + 20;
     }
     ctx.globalAlpha = 1;
     if (fogs.length) {
       ctx.globalAlpha = Math.max(0.3, haze());
-      for (const f of fogs) { ctx.drawImage(fogSprite, f.x, f.y, 420 * f.s, 200 * f.s); f.x += f.v * dt * (wnd.dirX || 1); if (f.x > W) f.x = -420 * f.s; else if (f.x < -420 * f.s) f.x = W; }
+      for (const f of fogs) { ctx.drawImage(fogSprite, f.x, f.y, 420 * f.s, 200 * f.s); f.x += f.v * dts * (wnd.dirX || 1); if (f.x > W) f.x = -420 * f.s; else if (f.x < -420 * f.s) f.x = W; }
       ctx.globalAlpha = 1;
+    }
     }
 
     ctx = ctxF;
@@ -555,8 +564,11 @@
   document.addEventListener("visibilitychange", syncParticles);
   window.addEventListener("location-changed", () => setTimeout(tick, 50));
   window.addEventListener("popstate", () => setTimeout(tick, 50));
-  const _push = history.pushState, _replace = history.replaceState;
-  history.pushState = function (...a) { const r = _push.apply(this, a); setTimeout(tick, 50); return r; };
-  history.replaceState = function (...a) { const r = _replace.apply(this, a); setTimeout(tick, 50); return r; };
+  /* stop drawing while a finger or the mouse is down, or a pop-up (address hash) is open, so sliders stay smooth */
+  let touching = false, touchTimer = 0;
+  const touch = (on) => { clearTimeout(touchTimer); if (on) touching = true; else touchTimer = setTimeout(() => { touching = false; }, 500); };
+  window.addEventListener("pointerdown", () => touch(true), true);
+  window.addEventListener("pointerup", () => touch(false), true);
+  window.addEventListener("pointercancel", () => touch(false), true);
   buildSprites();
 })();

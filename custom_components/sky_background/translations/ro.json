@@ -101,9 +101,13 @@
         "data": {
           "max_fps": "Rată maximă de cadre",
           "pause_when_hidden": "Pune pe pauză când fila e ascunsă",
+          "pause_on_interaction": "Pauză cât atingi ecranul sau când e deschis un popup",
           "respect_reduced_motion": "Respectă setarea de mișcare redusă a dispozitivului",
           "auto_reduce_weak_devices": "Înjumătățește efectele pe dispozitive slabe",
           "disable_on_mobile": "Oprește efectele pe telefoane"
+        },
+        "data_description": {
+          "pause_on_interaction": "Păstrează sliderele și popup-urile fluide: nu se redesenează nimic cât apeși, tragi sau ai un popup (adresă cu #) deschis."
         }
       },
       "scope": {

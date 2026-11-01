@@ -6,6 +6,14 @@ The format follows [Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and 
 
 ## [Unreleased]
 
+## [0.3.2] - 2026-11-01
+
+### Fixed
+- Sliders and pop-ups on the dashboard could stop responding properly while effects were drawn. The module no longer replaces `history.pushState` and `history.replaceState`, draws at 1x pixel density, redraws the sky about 11 times a second instead of at the full frame rate, and pauses drawing while you press or drag or while a pop-up is open.
+
+### Added
+- Option "Pause while touching or when a pop-up is open" (on by default).
+
 ## [0.3.0] - 2026-11-01
 
 ### Changed
@@ -38,7 +46,8 @@ First public version.
 ### Notes
 - The integration never changes your theme or your cards.
 
-[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.0...HEAD
+[Unreleased]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.2...HEAD
+[0.3.2]: https://github.com/sandreialexandru/Sky-Background/compare/v0.3.0...v0.3.2
 [0.3.0]: https://github.com/sandreialexandru/Sky-Background/compare/v0.2.0...v0.3.0
 [0.2.0]: https://github.com/sandreialexandru/Sky-Background/compare/v0.1.0...v0.2.0
 [0.1.0]: https://github.com/sandreialexandru/Sky-Background/releases/tag/v0.1.0

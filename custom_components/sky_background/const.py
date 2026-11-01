@@ -2,7 +2,7 @@
 from __future__ import annotations
 
 DOMAIN = "sky_background"
-VERSION = "0.3.0"
+VERSION = "0.3.2"
 URL_BASE = "/sky_background"
 JS_FILE = "sky-background.js"
 
@@ -36,6 +36,7 @@ FRONTEND_KEYS = [
     "particle_opacity",
     "max_fps",
     "pause_when_hidden",
+    "pause_on_interaction",
     "respect_reduced_motion",
     "auto_reduce_weak_devices",
     "disable_on_mobile",
@@ -96,6 +97,7 @@ DEFAULTS: dict = {
     # performance
     "max_fps": 30,
     "pause_when_hidden": True,
+    "pause_on_interaction": True,
     "respect_reduced_motion": True,
     "auto_reduce_weak_devices": True,
     "disable_on_mobile": False,

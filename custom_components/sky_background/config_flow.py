@@ -90,6 +90,7 @@ PAGES: dict[str, dict[str, Any]] = {
     "performance": {
         "max_fps": _num(10, 60, 5, "fps"),
         "pause_when_hidden": _BOOL,
+        "pause_on_interaction": _BOOL,
         "respect_reduced_motion": _BOOL,
         "auto_reduce_weak_devices": _BOOL,
         "disable_on_mobile": _BOOL,

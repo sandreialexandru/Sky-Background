@@ -168,7 +168,7 @@
   }
 
   function applyTheme(force) {
-    if (!themeAllowed() || opts.background_mode === "off") { clearBackground(); hideOverlay(); appliedKey = ""; return; }
+    if (!themeAllowed() || opts.background_mode === "off" || !dashboardAllowed()) { clearBackground(); hideOverlay(); appliedKey = ""; return; }
     const dark = isDark();
     const overlay = opts.background_mode === "overlay" || (opts.background_mode === "auto" && themeDefinesBackground());
     const state = [period, effect, dark, overlay, JSON.stringify(opts)].join("|");
@@ -554,5 +554,9 @@
   addEventListener("resize", () => { if (hass) resize(); });
   document.addEventListener("visibilitychange", syncParticles);
   window.addEventListener("location-changed", () => setTimeout(tick, 50));
+  window.addEventListener("popstate", () => setTimeout(tick, 50));
+  const _push = history.pushState, _replace = history.replaceState;
+  history.pushState = function (...a) { const r = _push.apply(this, a); setTimeout(tick, 50); return r; };
+  history.replaceState = function (...a) { const r = _replace.apply(this, a); setTimeout(tick, 50); return r; };
   buildSprites();
 })();

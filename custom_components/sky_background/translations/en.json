@@ -70,7 +70,11 @@
           "stars": "Stars on clear evenings and nights",
           "clouds": "Drifting clouds",
           "fog": "Fog",
-          "particle_opacity": "Effect opacity"
+          "particle_opacity": "Effect opacity",
+          "layer": "Where the effects are drawn"
+        },
+        "data_description": {
+          "layer": "Behind the cards works on standard Home Assistant dashboards. If it can't find the dashboard background it falls back to above."
         }
       },
       "performance": {
@@ -166,6 +170,12 @@
         "always": "Always set the background",
         "overlay": "Overlay only",
         "off": "Off (effects only)"
+      }
+    },
+    "layer": {
+      "options": {
+        "behind": "Behind the cards (over the background)",
+        "above": "Above the cards"
       }
     }
   },

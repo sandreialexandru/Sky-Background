@@ -70,7 +70,11 @@
           "stars": "Stele seara și noaptea pe vreme senină",
           "clouds": "Nori în mișcare",
           "fog": "Ceață",
-          "particle_opacity": "Opacitatea efectelor"
+          "particle_opacity": "Opacitatea efectelor",
+          "layer": "Unde se desenează efectele"
+        },
+        "data_description": {
+          "layer": "În spatele cardurilor merge pe dashboard-urile standard Home Assistant. Dacă nu găsește fundalul dashboard-ului, desenează peste carduri."
         }
       },
       "performance": {
@@ -166,6 +170,12 @@
         "always": "Setează mereu fundalul",
         "overlay": "Doar suprapunere",
         "off": "Oprit (doar efectele)"
+      }
+    },
+    "layer": {
+      "options": {
+        "behind": "În spatele cardurilor (peste fundal)",
+        "above": "Peste carduri"
       }
     }
   },

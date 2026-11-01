@@ -72,6 +72,7 @@ PAGES: dict[str, dict[str, Any]] = {
         "clouds": _BOOL,
         "fog": _BOOL,
         "particle_opacity": _num(10, 100, 5, "%"),
+        "layer": _choice(["behind", "above"], "layer"),
     },
     "performance": {
         "max_fps": _num(10, 60, 5, "fps"),

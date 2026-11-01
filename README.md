@@ -38,7 +38,7 @@ Open the integration and choose **Configure**. Pages are saved together with **S
 | --- | --- |
 | Weather source and mapping | weather entity, outdoor temperature sensor, treat *partly cloudy* as clear or cloudy, turn rain into snow below a temperature |
 | Time-of-day periods | minutes before/after sunrise, half-width of midday around solar noon, when evening starts before sunset and how long it lasts after |
-| Weather effects | effects on/off, rain and snow density and speed, wind tilt, extra density for heavy rain, ripples, lightning, stars, drifting clouds, fog, effect opacity |
+| Weather effects | effects on/off, rain and snow density and speed, wind tilt, extra density for heavy rain, ripples, lightning, stars, drifting clouds, fog, effect opacity, draw behind or above the cards |
 | Performance | maximum frame rate, pause when the tab is hidden, respect reduced motion, halve effects on weak devices, turn effects off on phones |
 | Where it applies | all dashboards, only the listed ones, or all except the listed ones; optionally on other pages too (history, map, settings); only when one of the listed themes is selected |
 | Background | background mode (auto, always, overlay only, off), overlay intensity, dark/light/auto, glow intensity, weather dimming, dotted texture |
@@ -53,6 +53,6 @@ Open the integration and choose **Configure**. Pages are saved together with **S
 ## Notes
 
 - In **Auto** mode a background is set only if no theme defines one. Dashboards that paint their own view background can hide it: use **Overlay only** there.
-- Particles are drawn on a canvas above the dashboard, with pointer events disabled. Lower **Effect opacity** if you want them subtler.
+- By default the effects are drawn **behind the cards, over the dashboard background** (they show through translucent cards and around them). Choose *Above the cards* to draw them over everything. Pointer events are always disabled.
 - Nothing in your theme is modified. The integration may set `--lovelace-background` on the page (Auto/Always) and removes it if you turn the option off.
 - Needs Home Assistant 2025.1 or newer.

@@ -12,7 +12,7 @@
     wind: 20, heavy_rain_multiplier: 180, ripples: true, lightning: true, stars: true, clouds: true,
     fog: true, particle_opacity: 100, max_fps: 30, pause_when_hidden: true, respect_reduced_motion: true,
     auto_reduce_weak_devices: true, disable_on_mobile: false, dashboards_mode: "all", dashboards: "",
-    background_mode: "auto", overlay_intensity: 60, everywhere: false, color_mode: "auto", background_intensity: 100,
+    layer: "behind", background_mode: "auto", overlay_intensity: 100, everywhere: false, color_mode: "auto", background_intensity: 100,
     weather_dimming: 100, show_dots: false, only_theme_names: "",
   };
 
@@ -58,14 +58,14 @@
   const DOTS = { dark: dotsUri(false), light: dotsUri(true) };
 
   /* Background layers for a period + effect. As an overlay it is lighter and has no texture. */
-  function layersFor(period, effect, dark, o, overlay) {
+  function layersFor(period, effect, dark, o, overlay, behind) {
     const mode = dark ? "dark" : "light";
     const glows = (SKY[mode][period] || SKY[mode].night)[1];
-    const k = (o.background_intensity / 100) * (overlay ? o.overlay_intensity / 100 : 1);
+    const k = (o.background_intensity / 100) * (overlay ? (o.overlay_intensity / 100) * (behind ? 1 : 0.6) : 1);
     const wd = o.weather_dimming / 100;
     const fx = overlay ? "" : " fixed";
     const layers = [];
-    const dim = (DIM[effect] || DIM.clear)[dark ? 0 : 1] * wd * (overlay ? 0.35 : 1);
+    const dim = (DIM[effect] || DIM.clear)[dark ? 0 : 1] * wd * (overlay && !behind ? 0.35 : 1);
     if (dim > 0) {
       const c = dark ? "10,15,24" : "92,106,126", a = Math.min(dim, 0.85).toFixed(3);
       layers.push(`linear-gradient(rgba(${c},${a}), rgba(${c},${a}))${fx}`);
@@ -121,14 +121,48 @@
     root.style.setProperty(BG_VAR, value);
     ourBg = currentBg();
   }
+  /* hui-view-container holds hui-view-background (fixed, z-index -1). A sibling with the same z-index that comes
+   * later in the DOM paints over the background and under the cards. */
+  let vcCache = null, vcTried = 0;
+  function deepFind(start, sel) {
+    const queue = [start];
+    while (queue.length) {
+      const node = queue.shift();
+      const hit = node.querySelector && node.querySelector(sel);
+      if (hit) return hit;
+      const all = node.querySelectorAll ? node.querySelectorAll("*") : [];
+      for (const el of all) if (el.shadowRoot) queue.push(el.shadowRoot);
+    }
+    return null;
+  }
+  function viewContainer() {
+    if (vcCache && vcCache.isConnected) return vcCache;
+    vcCache = null;
+    const now = Date.now();
+    if (now - vcTried < 2000) return null;
+    vcTried = now;
+    const ha = document.querySelector("home-assistant");
+    if (!ha || !ha.shadowRoot) return null;
+    const panel = deepFind(ha.shadowRoot, "ha-panel-lovelace");
+    const rootEl = panel && panel.shadowRoot && panel.shadowRoot.querySelector("hui-root");
+    vcCache = (rootEl && rootEl.shadowRoot && rootEl.shadowRoot.querySelector("hui-view-container")) || null;
+    return vcCache;
+  }
+  const wantsBehind = () => opts.layer === "behind" && !!viewContainer();
+  function mount(el, zAbove) {
+    const vc = opts.layer === "behind" ? viewContainer() : null;
+    el.style.zIndex = vc ? "-1" : String(zAbove);
+    const parent = vc || document.body;
+    if (el.parentNode !== parent) parent.appendChild(el);
+  }
   function hideOverlay() { if (overlayEl) overlayEl.style.display = "none"; }
   function showOverlay(layers) {
     if (!overlayEl) {
       overlayEl = document.createElement("div");
       overlayEl.id = "sky-background-overlay";
-      overlayEl.style.cssText = "position:fixed;inset:0;pointer-events:none;z-index:2";
+      overlayEl.style.cssText = "position:fixed;inset:0;pointer-events:none";
     }
-    if (!overlayEl.isConnected) document.body.appendChild(overlayEl);
+    mount(overlayEl, 2);
     overlayEl.style.background = layers.join(", ");
     overlayEl.style.display = "block";
   }
@@ -141,10 +175,10 @@
     if (!force && state === appliedKey && (overlay || intact())) return;
     if (overlay) {
       clearBackground();
-      showOverlay(layersFor(period, effect, dark, opts, true));
+      showOverlay(layersFor(period, effect, dark, opts, true, wantsBehind()));
     } else {
       hideOverlay();
-      setBackground(`${layersFor(period, effect, dark, opts, false).join(", ")}, var(--primary-background-color)`);
+      setBackground(`${layersFor(period, effect, dark, opts, false, false).join(", ")}, var(--primary-background-color)`);
     }
     appliedKey = state;
   }
@@ -159,7 +193,7 @@
   /* ------------------------------------------------------------- particles */
   const cv = document.createElement("canvas");
   cv.id = "sky-background-canvas";
-  cv.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;z-index:3;display:none";
+  cv.style.cssText = "position:fixed;inset:0;width:100%;height:100%;pointer-events:none;display:none";
   const ctx = cv.getContext("2d");
   let W = 0, H = 0, dpr = 1, drops = [], flakes = [], hail = [], ripples = [], stars = [], clouds = [], fogs = [];
   let t = 0, last = 0, flash = 0, nextFlash = 5, running = false, rafId = 0, fogSprite = null, cloudSprite = null;
@@ -276,7 +310,7 @@
       && !(opts.pause_when_hidden && document.hidden);
     if (!want) { stop(); return; }
     cv.style.display = "block"; cv.style.opacity = String(opts.particle_opacity / 100);
-    if (!cv.isConnected) document.body.appendChild(cv);
+    mount(cv, 3);
     if (!running) { running = true; last = 0; rafId = requestAnimationFrame(frame); }
   }
   function stop() { if (running) { cancelAnimationFrame(rafId); running = false; } cv.style.display = "none"; ctx.clearRect(0, 0, W, H); }
@@ -300,6 +334,7 @@
     if (changed || !sized) { sized = true; applyTheme(true); resize(); }
     else applyTheme(false);
     if (location.pathname !== lastPath) { lastPath = location.pathname; }
+    if (overlayEl && overlayEl.style.display !== "none") mount(overlayEl, 2);
     syncParticles();
   }
   setInterval(tick, 1500);

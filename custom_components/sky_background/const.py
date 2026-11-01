@@ -41,6 +41,7 @@ FRONTEND_KEYS = [
     "disable_on_mobile",
     "dashboards_mode",
     "dashboards",
+    "layer",
     "background_mode",
     "overlay_intensity",
     "everywhere",
@@ -90,8 +91,9 @@ DEFAULTS: dict = {
     "dashboards_mode": "all",
     "dashboards": "",
     # appearance
+    "layer": "behind",
     "background_mode": "auto",
-    "overlay_intensity": 60,
+    "overlay_intensity": 100,
     "color_mode": "auto",
     "background_intensity": 100,
     "weather_dimming": 100,

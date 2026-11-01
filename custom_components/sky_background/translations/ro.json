@@ -1,0 +1,201 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sky Background",
+        "description": "Alege entitatea de vreme care comandă fundalul și efectele. Restul se reglează mai târziu din opțiunile integrării.",
+        "data": {
+          "weather_entity": "Entitate de vreme",
+          "temperature_entity": "Senzor de temperatură exterioară (opțional)"
+        },
+        "data_description": {
+          "temperature_entity": "Se folosește la conversia ploaie → ninsoare. Dacă e gol, se ia temperatura din entitatea de vreme."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Sky Background este deja configurat."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Opțiuni Sky Background",
+        "menu_options": {
+          "weather": "Sursa vremii și corespondențe",
+          "periods": "Perioadele zilei",
+          "effects": "Efecte meteo",
+          "performance": "Performanță",
+          "scope": "Unde se aplică",
+          "appearance": "Temă și fundal",
+          "save": "Salvează și închide"
+        }
+      },
+      "weather": {
+        "title": "Sursa vremii și corespondențe",
+        "data": {
+          "weather_entity": "Entitate de vreme",
+          "temperature_entity": "Senzor de temperatură exterioară (opțional)",
+          "partlycloudy_as": "Tratează „parțial noros” ca",
+          "rain_to_snow": "Transformă ploaia în ninsoare când e frig",
+          "rain_to_snow_temp": "Ninsoare la această temperatură sau mai jos"
+        },
+        "data_description": {
+          "rain_to_snow": "Unii furnizori raportează ploaie în jur de 0 °C."
+        }
+      },
+      "periods": {
+        "title": "Perioadele zilei",
+        "description": "Răsăritul, amiaza și seara se calculează după soare. Reglează cât durează fiecare.",
+        "data": {
+          "sunrise_before_min": "Răsăritul începe înainte de răsăritul soarelui",
+          "sunrise_after_min": "Răsăritul durează după răsăritul soarelui",
+          "midday_half_width_min": "Amiază: minute de o parte și de alta a prânzului solar",
+          "evening_before_sunset_min": "Seara începe înainte de apus",
+          "evening_after_sunset_min": "Seara durează după apus"
+        }
+      },
+      "effects": {
+        "title": "Efecte meteo",
+        "data": {
+          "effects_enabled": "Desenează efectele meteo",
+          "rain_density": "Densitatea ploii",
+          "snow_density": "Densitatea ninsorii",
+          "rain_speed": "Viteza ploii",
+          "snow_speed": "Viteza ninsorii",
+          "wind": "Înclinare vânt (negativ = stânga)",
+          "heavy_rain_multiplier": "Densitate suplimentară la ploaie torențială și furtună",
+          "ripples": "Ondulații unde cad picăturile",
+          "lightning": "Fulgere în furtună",
+          "stars": "Stele seara și noaptea pe vreme senină",
+          "clouds": "Nori în mișcare",
+          "fog": "Ceață",
+          "particle_opacity": "Opacitatea efectelor"
+        }
+      },
+      "performance": {
+        "title": "Performanță",
+        "data": {
+          "max_fps": "Rată maximă de cadre",
+          "pause_when_hidden": "Pune pe pauză când fila e ascunsă",
+          "respect_reduced_motion": "Respectă setarea de mișcare redusă a dispozitivului",
+          "auto_reduce_weak_devices": "Înjumătățește efectele pe dispozitive slabe",
+          "disable_on_mobile": "Oprește efectele pe telefoane"
+        }
+      },
+      "scope": {
+        "title": "Unde se aplică",
+        "data": {
+          "dashboards_mode": "Dashboard-uri",
+          "dashboards": "Căi URL ale dashboard-urilor (separate prin virgulă)",
+          "only_theme_names": "Doar când e aleasă una dintre aceste teme (separate prin virgulă, gol = mereu)"
+        },
+        "data_description": {
+          "dashboards": "De exemplu: lovelace, dashboard-new. Se folosește cu includere și excludere.",
+          "only_theme_names": "De exemplu: MyTheme, MyTheme_Evening"
+        }
+      },
+      "appearance": {
+        "title": "Temă și fundal",
+        "data": {
+          "apply_background": "Setează fundalul după ora din zi",
+          "apply_palette": "Aplică paleta doar cu borduri și variabilele Bubble Card",
+          "color_mode": "Mod de culoare",
+          "background_intensity": "Intensitatea luminilor din fundal",
+          "weather_dimming": "Întunecare după vreme",
+          "show_dots": "Textură cu puncte (cer înstelat)",
+          "custom_variables": "Variabile CSS suplimentare (obiect JSON)"
+        },
+        "data_description": {
+          "custom_variables": "Se aplică ultimele, deci au prioritate. Exemplu: {\"dash-on\": \"#FFB300\"}"
+        }
+      }
+    },
+    "error": {
+      "invalid_json": "Introdu un obiect JSON valid.",
+      "dashboards_required": "Introdu cel puțin o cale URL de dashboard."
+    }
+  },
+  "selector": {
+    "partlycloudy_as": {
+      "options": { "clear": "Senin", "cloudy": "Noros" }
+    },
+    "dashboards_mode": {
+      "options": {
+        "all": "Toate dashboard-urile",
+        "include": "Doar cele din listă",
+        "exclude": "Toate, în afară de cele din listă"
+      }
+    },
+    "color_mode": {
+      "options": { "auto": "Ca Home Assistant", "dark": "Mereu întunecat", "light": "Mereu luminos" }
+    },
+    "period": {
+      "options": {
+        "night": "Noapte",
+        "sunrise": "Răsărit",
+        "morning": "Dimineață",
+        "midday": "Amiază",
+        "afternoon": "După-amiază",
+        "evening": "Seară"
+      }
+    },
+    "effect": {
+      "options": {
+        "clear": "Senin",
+        "cloudy": "Noros",
+        "fog": "Ceață",
+        "rain": "Ploaie",
+        "heavy_rain": "Ploaie torențială",
+        "storm": "Furtună",
+        "snow": "Ninsoare",
+        "sleet": "Lapoviță",
+        "hail": "Grindină"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "period": {
+        "name": "Perioadă",
+        "state": {
+          "night": "Noapte",
+          "sunrise": "Răsărit",
+          "morning": "Dimineață",
+          "midday": "Amiază",
+          "afternoon": "După-amiază",
+          "evening": "Seară"
+        }
+      },
+      "effect": {
+        "name": "Efect",
+        "state": {
+          "clear": "Senin",
+          "cloudy": "Noros",
+          "fog": "Ceață",
+          "rain": "Ploaie",
+          "heavy_rain": "Ploaie torențială",
+          "storm": "Furtună",
+          "snow": "Ninsoare",
+          "sleet": "Lapoviță",
+          "hail": "Grindină"
+        }
+      }
+    }
+  },
+  "services": {
+    "override": {
+      "name": "Forțează",
+      "description": "Forțează o perioadă și/sau un efect o vreme, ca să previzualizezi aspectul.",
+      "fields": {
+        "period": { "name": "Perioadă", "description": "Perioada zilei de afișat." },
+        "effect": { "name": "Efect", "description": "Efectul meteo de afișat." },
+        "duration": { "name": "Durată", "description": "Cât ține forțarea." }
+      }
+    },
+    "clear_override": {
+      "name": "Anulează forțarea",
+      "description": "Revine la ora și vremea reale."
+    }
+  }
+}

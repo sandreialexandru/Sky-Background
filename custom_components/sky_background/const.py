@@ -1,0 +1,119 @@
+"""Constants for Sky Background."""
+from __future__ import annotations
+
+DOMAIN = "sky_background"
+VERSION = "0.1.0"
+URL_BASE = "/sky_background"
+JS_FILE = "sky-background.js"
+
+PERIODS = ["night", "sunrise", "morning", "midday", "afternoon", "evening"]
+EFFECTS = [
+    "clear",
+    "cloudy",
+    "fog",
+    "rain",
+    "heavy_rain",
+    "storm",
+    "snow",
+    "sleet",
+    "hail",
+]
+
+# Options that are handed to the frontend module (everything except the entity ids).
+FRONTEND_KEYS = [
+    "effects_enabled",
+    "rain_density",
+    "snow_density",
+    "rain_speed",
+    "snow_speed",
+    "wind",
+    "heavy_rain_multiplier",
+    "ripples",
+    "lightning",
+    "stars",
+    "clouds",
+    "fog",
+    "particle_opacity",
+    "max_fps",
+    "pause_when_hidden",
+    "respect_reduced_motion",
+    "auto_reduce_weak_devices",
+    "disable_on_mobile",
+    "dashboards_mode",
+    "dashboards",
+    "apply_background",
+    "apply_palette",
+    "color_mode",
+    "background_intensity",
+    "weather_dimming",
+    "show_dots",
+    "only_theme_names",
+    "custom_variables",
+]
+
+DEFAULTS: dict = {
+    # general
+    "weather_entity": "",
+    "temperature_entity": "",
+    # periods (minutes)
+    "sunrise_before_min": 30,
+    "sunrise_after_min": 90,
+    "midday_half_width_min": 120,
+    "evening_before_sunset_min": 90,
+    "evening_after_sunset_min": 120,
+    # weather mapping
+    "partlycloudy_as": "clear",
+    "rain_to_snow": False,
+    "rain_to_snow_temp": 0.0,
+    # effects
+    "effects_enabled": True,
+    "rain_density": 100,
+    "snow_density": 100,
+    "rain_speed": 100,
+    "snow_speed": 100,
+    "wind": 20,
+    "heavy_rain_multiplier": 180,
+    "ripples": True,
+    "lightning": True,
+    "stars": True,
+    "clouds": True,
+    "fog": True,
+    "particle_opacity": 100,
+    # performance
+    "max_fps": 30,
+    "pause_when_hidden": True,
+    "respect_reduced_motion": True,
+    "auto_reduce_weak_devices": True,
+    "disable_on_mobile": False,
+    # where
+    "dashboards_mode": "all",
+    "dashboards": "",
+    # appearance
+    "apply_background": True,
+    "apply_palette": True,
+    "color_mode": "auto",
+    "background_intensity": 100,
+    "weather_dimming": 100,
+    "show_dots": True,
+    "only_theme_names": "",
+    "custom_variables": "",
+}
+
+# HA weather condition -> effect
+CONDITION_EFFECT = {
+    "clear-night": "clear",
+    "sunny": "clear",
+    "exceptional": "clear",
+    "partlycloudy": "partlycloudy",
+    "cloudy": "cloudy",
+    "windy": "cloudy",
+    "windy-variant": "cloudy",
+    "fog": "fog",
+    "rainy": "rain",
+    "pouring": "heavy_rain",
+    "lightning-rainy": "storm",
+    "lightning": "storm",
+    "snowy": "snow",
+    "snowy-rainy": "sleet",
+    "hail": "hail",
+}

@@ -1,0 +1,201 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Sky Background",
+        "description": "Pick the weather entity that drives the background and the weather effects. Everything else can be tuned later in the integration options.",
+        "data": {
+          "weather_entity": "Weather entity",
+          "temperature_entity": "Outdoor temperature sensor (optional)"
+        },
+        "data_description": {
+          "temperature_entity": "Used for the rain-to-snow conversion. If empty, the temperature of the weather entity is used."
+        }
+      }
+    },
+    "abort": {
+      "single_instance_allowed": "Sky Background is already set up."
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Sky Background options",
+        "menu_options": {
+          "weather": "Weather source and mapping",
+          "periods": "Time-of-day periods",
+          "effects": "Weather effects",
+          "performance": "Performance",
+          "scope": "Where it applies",
+          "appearance": "Theme and background",
+          "save": "Save and close"
+        }
+      },
+      "weather": {
+        "title": "Weather source and mapping",
+        "data": {
+          "weather_entity": "Weather entity",
+          "temperature_entity": "Outdoor temperature sensor (optional)",
+          "partlycloudy_as": "Treat \"partly cloudy\" as",
+          "rain_to_snow": "Turn rain into snow when it is cold",
+          "rain_to_snow_temp": "Snow at or below this temperature"
+        },
+        "data_description": {
+          "rain_to_snow": "Some weather providers report rain at around 0 °C."
+        }
+      },
+      "periods": {
+        "title": "Time-of-day periods",
+        "description": "Sunrise, midday and evening are computed from the sun. Adjust how long each one lasts.",
+        "data": {
+          "sunrise_before_min": "Sunrise starts before the sun rises",
+          "sunrise_after_min": "Sunrise lasts after the sun rises",
+          "midday_half_width_min": "Midday: minutes either side of solar noon",
+          "evening_before_sunset_min": "Evening starts before sunset",
+          "evening_after_sunset_min": "Evening lasts after sunset"
+        }
+      },
+      "effects": {
+        "title": "Weather effects",
+        "data": {
+          "effects_enabled": "Draw weather effects",
+          "rain_density": "Rain density",
+          "snow_density": "Snow density",
+          "rain_speed": "Rain speed",
+          "snow_speed": "Snow speed",
+          "wind": "Wind tilt (negative = left)",
+          "heavy_rain_multiplier": "Extra density for heavy rain and storms",
+          "ripples": "Ripples where drops land",
+          "lightning": "Lightning flashes in storms",
+          "stars": "Stars on clear evenings and nights",
+          "clouds": "Drifting clouds",
+          "fog": "Fog",
+          "particle_opacity": "Effect opacity"
+        }
+      },
+      "performance": {
+        "title": "Performance",
+        "data": {
+          "max_fps": "Maximum frame rate",
+          "pause_when_hidden": "Pause when the tab is hidden",
+          "respect_reduced_motion": "Respect the device's reduced-motion setting",
+          "auto_reduce_weak_devices": "Halve the effects on weak devices",
+          "disable_on_mobile": "Turn effects off on phones"
+        }
+      },
+      "scope": {
+        "title": "Where it applies",
+        "data": {
+          "dashboards_mode": "Dashboards",
+          "dashboards": "Dashboard URL paths (comma separated)",
+          "only_theme_names": "Only when one of these themes is selected (comma separated, empty = always)"
+        },
+        "data_description": {
+          "dashboards": "For example: lovelace, dashboard-new. Used with include and exclude.",
+          "only_theme_names": "For example: MyTheme, MyTheme_Evening"
+        }
+      },
+      "appearance": {
+        "title": "Theme and background",
+        "data": {
+          "apply_background": "Set the time-of-day background",
+          "apply_palette": "Apply the border-only palette and Bubble Card variables",
+          "color_mode": "Color mode",
+          "background_intensity": "Background glow intensity",
+          "weather_dimming": "Weather dimming",
+          "show_dots": "Dotted starfield texture",
+          "custom_variables": "Extra CSS variables (JSON object)"
+        },
+        "data_description": {
+          "custom_variables": "Applied last, so they win over everything else. Example: {\"dash-on\": \"#FFB300\"}"
+        }
+      }
+    },
+    "error": {
+      "invalid_json": "Enter a valid JSON object.",
+      "dashboards_required": "Enter at least one dashboard URL path."
+    }
+  },
+  "selector": {
+    "partlycloudy_as": {
+      "options": { "clear": "Clear", "cloudy": "Cloudy" }
+    },
+    "dashboards_mode": {
+      "options": {
+        "all": "All dashboards",
+        "include": "Only the ones listed",
+        "exclude": "All except the ones listed"
+      }
+    },
+    "color_mode": {
+      "options": { "auto": "Follow Home Assistant", "dark": "Always dark", "light": "Always light" }
+    },
+    "period": {
+      "options": {
+        "night": "Night",
+        "sunrise": "Sunrise",
+        "morning": "Morning",
+        "midday": "Midday",
+        "afternoon": "Afternoon",
+        "evening": "Evening"
+      }
+    },
+    "effect": {
+      "options": {
+        "clear": "Clear",
+        "cloudy": "Cloudy",
+        "fog": "Fog",
+        "rain": "Rain",
+        "heavy_rain": "Heavy rain",
+        "storm": "Storm",
+        "snow": "Snow",
+        "sleet": "Sleet",
+        "hail": "Hail"
+      }
+    }
+  },
+  "entity": {
+    "sensor": {
+      "period": {
+        "name": "Period",
+        "state": {
+          "night": "Night",
+          "sunrise": "Sunrise",
+          "morning": "Morning",
+          "midday": "Midday",
+          "afternoon": "Afternoon",
+          "evening": "Evening"
+        }
+      },
+      "effect": {
+        "name": "Effect",
+        "state": {
+          "clear": "Clear",
+          "cloudy": "Cloudy",
+          "fog": "Fog",
+          "rain": "Rain",
+          "heavy_rain": "Heavy rain",
+          "storm": "Storm",
+          "snow": "Snow",
+          "sleet": "Sleet",
+          "hail": "Hail"
+        }
+      }
+    }
+  },
+  "services": {
+    "override": {
+      "name": "Override",
+      "description": "Force a period and/or an effect for a while, to preview the look.",
+      "fields": {
+        "period": { "name": "Period", "description": "Time-of-day period to show." },
+        "effect": { "name": "Effect", "description": "Weather effect to show." },
+        "duration": { "name": "Duration", "description": "How long the override lasts." }
+      }
+    },
+    "clear_override": {
+      "name": "Clear override",
+      "description": "Go back to the real time of day and weather."
+    }
+  }
+}

@@ -1,0 +1,22 @@
+override:
+  fields:
+    period:
+      selector:
+        select:
+          options: [night, sunrise, morning, midday, afternoon, evening]
+          translation_key: period
+    effect:
+      selector:
+        select:
+          options: [clear, cloudy, fog, rain, heavy_rain, storm, snow, sleet, hail]
+          translation_key: effect
+    duration:
+      default: 10
+      selector:
+        number:
+          min: 1
+          max: 1440
+          unit_of_measurement: min
+          mode: box
+
+clear_override:
